@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.11.9)  19 NOV 2010 10:53
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.11.9)  21 NOV 2010 14:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -82,14 +82,8 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \mathdisplay@stack=\toks18
 LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
-) (./series.aux
-
-LaTeX Warning: Label `sec:invert' multiply defined.
-
-
-LaTeX Warning: Label `sec:toseries' multiply defined.
-
 )
+No file series.aux.
 \openout1 = `series.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
@@ -105,38 +99,77 @@ LaTeX Font Info:    ... okay on input line 4.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.
 LaTeX Font Info:    ... okay on input line 4.
 
-Overfull \hbox (15.63951pt too wide) in paragraph at lines 59--64
-\OT1/cmr/m/n/10 prefer-ably in one of the di-rec-to-ries de-fined by the en-vi-
-ron-ment vari-able []
+LaTeX Warning: Reference `sec:usage' on page 1 undefined on input line 24.
+
+
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 57--57
+[]\OT1/cmtt/m/n/10 * the procedure power(foo,bar,foobar) would compute foobar=f
+oo^bar[] 
  []
 
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 65.
+Overfull \hbox (15.63951pt too wide) in paragraph at lines 67--72
+\OT1/cmr/m/n/10 prefer-ably in one of the di-rec-to-ries de-fined by the en-vi-
+ron-ment vari-able []
+ []
 
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 73.
 (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 65.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 73.
 
-Overfull \hbox (21.1129pt too wide) in paragraph at lines 69--72
+
+LaTeX Warning: Reference `sec:namesp' on page 2 undefined on input line 76.
+
+
+Overfull \hbox (21.1129pt too wide) in paragraph at lines 77--80
 []\OT1/cmr/m/n/10 Refrain from us-ing any sym-bols, ex-pres-sions, etc. of the 
 form \OT1/cmtt/m/n/10 [series::\OT1/cmr/m/it/10 name\OT1/cmtt/m/n/10 ]\OT1/cmr/
 m/n/10 .
  []
 
-[2] [3] [4] [5] [6] [7] [8] [9] [10] (./series.aux)
 
-LaTeX Warning: There were multiply-defined labels.
+LaTeX Warning: Reference `sec:proc' on page 2 undefined on input line 97.
+
+[2]
+
+LaTeX Warning: Reference `sec:log' on page 3 undefined on input line 178.
+
+[3] [4] [5] [6] [7]
+
+LaTeX Warning: Reference `sec:impl_general' on page 8 undefined on input line 4
+39.
+
+[8]
+
+LaTeX Warning: Reference `sec:impl_general' on page 9 undefined on input line 4
+74.
+
+[9]
+
+LaTeX Warning: Reference `sec:impl_general' on page 10 undefined on input line 
+510.
+
+
+LaTeX Warning: Reference `sec:exp' on page 10 undefined on input line 533.
+
+[10] (./series.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 876 strings out of 495021
- 9774 string characters out of 1181035
+ 873 strings out of 495021
+ 9742 string characters out of 1181035
  64328 words of memory out of 3000000
- 4128 multiletter control sequences out of 15000+50000
+ 4127 multiletter control sequences out of 15000+50000
  6126 words of font info for 23 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  27i,18n,20p,202b,245s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -152,7 +185,7 @@ texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-texlive
 1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/public/ams
 fonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cm
 tt10.pfb>
-Output written on series.pdf (10 pages, 184415 bytes).
+Output written on series.pdf (10 pages, 184985 bytes).
 PDF statistics:
  87 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

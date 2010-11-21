@@ -33,9 +33,14 @@ L foo=1-ep;
 *define a series variable and cut
 #call series(ep,3)
 
-*invert foo & save result in bar
+*invert foo & save result in the new expression bar
 #call invert(foo,bar)
+* now we have bar=foo^-1+O(ep^4)
 drop foo,bar;
+
+* analogous procedures: exp, log, power
+* the procedure power(foo,bar,foobar) would compute foobar=foo^bar
+
 
 *initialise operations on functions
 #call init(3)
@@ -44,6 +49,9 @@ L foo=exp(1-ep)+exp(1+ep);
 
 *expand exponential  function
 #call expand(exp)
+
+*analogous: log, pow, den
+* den(x?)=x^-1
 
 .end
 \end{verbatim}
@@ -77,7 +85,7 @@ There are two modes of usage: it is possible to either expand {\em expressions}
 usage and in their internal implementations. 
 
 The first mode, operating on expressions, is more mature and probably
-signigicantly faster. Use this mode, if you can. First, you will want to
+significantly faster. Use this mode, if you can. First, you will want to
 call the procedure {\tt series}, e.g.
 \begin{verbatim}
 #call series(ep,7)
@@ -103,7 +111,7 @@ your expressions. Make sure that the file {\tt partition.tbl} is in your
 FORMPATH; this mode will not work if it is not found by FORM.
 
 Like in the first mode, you have to call the {\tt series} procedure
-first. Afterwards it is most convenient to call {\tt expand} to expand a
+afterwards. In order to compute something, it is most convenient to call {\tt expand} to expand a
 function.
 
 
@@ -191,7 +199,7 @@ it in the expression given as the second argument. Thus
 is equivalent to 
 \begin{verbatim}
 L [-1]=-1;
-#call  invert(series,[-1],result)
+#call  power(series,[-1],result)
 drop [-1];
 \end{verbatim}
 but more readable and faster.
@@ -424,13 +432,14 @@ An explicit representation of the $b_i$ is
   \label{eq:exp}
   \begin{split}
     b_n=
-\sum_{P \in {\cal P}(n)} \left(\prod_{l \in P} \frac{c^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)
+\sum_{P \in {\cal P}(n)} \left(\prod_{l \in P} \frac{a^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)
   \end{split}
 \end{equation}
 For the definitions of the partition set ${\cal P}$ and the
 multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
 exponentials.
- At the moment, however, the function version just splits the
+ At the moment, however, the function version uses neither of the
+ aforementioned formulas but instead just splits the
  exponential function into a product and iteratively replaces
  \begin{equation}
    \label{eq:exp_simple}
@@ -459,7 +468,7 @@ b_n =& a_n - \sum_{i=1}^{n-1} \frac{i}{n} a_{n-i}b_{i}
 An explicit representation of the $b_n$ is
 \begin{equation}
   \label{eq:log_expl}
-  b_n=\left[\sum_{P \in {\cal P}(n)} (-1)^{|P|-1}(|P|-1)!\left(\prod_{l \in P} \frac{c^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)\right]
+  b_n=\left[\sum_{P \in {\cal P}(n)} (-1)^{|P|-1}(|P|-1)!\left(\prod_{l \in P} \frac{a^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)\right]
 \end{equation}
 For the definitions of the partition set ${\cal P}$ and the
 multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
@@ -495,7 +504,7 @@ with the recursive representation (for expressions)
 and the explicit representation (for functions)
 \begin{equation}
   \label{eq:inv_expl}
-  b_n=\left[\sum_{P \in {\cal P}(n)} (-1)^{|P|}|P|!\left(\prod_{l \in P} \frac{c^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)\right]
+  b_n=\left[\sum_{P \in {\cal P}(n)} (-1)^{|P|}|P|!\left(\prod_{l \in P} \frac{a^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)\right]
 \end{equation}
 For the definitions of the partition set ${\cal P}$ and the
 multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
@@ -507,20 +516,6 @@ exponentials.
 This is a collection of procedures that are not included in the
 distribution of the package. They are mostly deprecated or much too
 early in the development stage.
-
-\subsubsection{contractpowers}
-\label{sec:cpow}
-
-This is a special procedure for simplifying powers like
-\begin{verbatim}
-(x)^(y/2)*(x)^(y/2)
-\end{verbatim}
-FORM does not do this automatically - if you encounter such terms, use
-\begin{verbatim}
-#call contractpowers
-\end{verbatim}
-While it is certainly useful, this procedure no longer fits with the
-rest of the package; it might be included in a different future package.
 
 
 \subsubsection{Simple Powers}
