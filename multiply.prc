@@ -1,38 +1,26 @@
 #procedure multiply(SOURCE1,SOURCE2,TARGET)
 *multiplys the expressions SOURCE1 and SOURCE2 and saves the result in TARGET
 
-	#ifndef `$var'
-		#message no series found
-		#message (please call series(var,cut) first)
-		#terminate
-	#endif
-*abbreviations for convenience
-	#define VAR "`$var'"
+	#call toseries(`SOURCE1',ta)
+	#call toseries(`SOURCE2',tb)
 	#define CUT "`$cut'"
-
-	.sort
-*find out minimal powers in both expressions
-#do i=1,2
+	#define MINPOW "{`$minpowerta'+`$minpowertb'}"
+*	#call createtable(tc,{`CUT'-`MINPOW'})
 	skip;
-	nskip `SOURCE`i'';
-	#$`i'minpower=maxpowerof_(`VAR');
-	if(count(`VAR',1)<$`i'minpower) $`i'minpower=count_(`VAR',1);
-	moduleoption minimum $`i'minpower;
-	.sort
-#enddo
-
-	skip;
-	nskip `SOURCE1',`SOURCE2';
-	b+ `VAR';
-	.sort
 * use Cauchy multiplication
 	L `TARGET'=
-	#do n={`$1minpower'+`$2minpower'},`CUT'
-		#do i=`$1minpower',`n'
-			+`SOURCE1'[`VAR'^`i']*`SOURCE2'[`VAR'^{`n'-`i'}]*`VAR'^`n'
+	#do n=`MINPOW',`CUT'
+		+(
+		#do i=0,{`n'-`MINPOW'}
+			+[:ta](`i')*[:tb]({`n'-`i'})
 		#enddo
+		)*`$var'^`n'
 	#enddo
 	;
+	if(count([:ta],1,[:tb],1)>0)discard;
 	.sort
+	cleartable [:ta];
+	cleartable [:tb];
+*	cleartable [:tc];
 
 #endprocedure
