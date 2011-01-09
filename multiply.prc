@@ -5,18 +5,24 @@
 	#call toseries(`SOURCE2',tb)
 	#define CUT "`$cut'"
 	#define MINPOW "{`$minpowerta'+`$minpowertb'}"
+	S [:x],[:y];
 *	#call createtable(tc,{`CUT'-`MINPOW'})
 	skip;
 * use Cauchy multiplication
 	L `TARGET'=
-	#do n=`MINPOW',`CUT'
-		+(
-		#do i=0,{`n'-`MINPOW'}
-			+[:ta](`i')*[:tb]({`n'-`i'})
-		#enddo
-		)*`$var'^`n'
-	#enddo
-	;
+	sum_([:x],`MINPOW',`CUT',
+	sum_([:y],0,[:x]-`MINPOW',
+	[:ta]([:y])*[:tb]([:x]-[:y])
+	)
+	);
+* 	#do n=`MINPOW',`CUT'
+* 		+(
+* 		#do i=0,{`n'-`MINPOW'}
+* 			+[:ta](`i')*[:tb]({`n'-`i'})
+* 		#enddo
+* 		)*`$var'^`n'
+* 	#enddo
+* 	;
 	if(count([:ta],1,[:tb],1)>0)discard;
 	.sort
 	cleartable [:ta];
