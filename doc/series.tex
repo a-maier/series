@@ -100,7 +100,7 @@ out which procedure does what.
 \medskip
 
 The second mode, operating on functions, is not tested as well and
-probably a lot slower. In order to use it, you have to call the
+ a lot slower. In order to use it, you have to call the
 procedure {\tt init} first:
 \begin{verbatim}
 #call init(9)
@@ -349,8 +349,8 @@ names for its expressions and symbols, which hopeful no sane person
 would ever use in his or her FORM program.
 
 Still, there is a problem with the names of procedures which might clash
-with user-defined ones (did I mention that FORM doesn't know overloading
-either?). To work around this, the {\tt series} package has very basic
+with user-defined ones (unfortunately FORM doesn't know overloading
+either). To work around this, the {\tt series} package has very basic
 support for namespaces. If the preprocessor variable {\tt NAMESPACE} is
 defined {\em before} the {\tt series} package is included, all
 procedures will have the value of {\tt NAMESPACE} prepended to their name:
