@@ -31,7 +31,7 @@ id once [:g](?a)= `LOG'(?a);
 *compute coefficients of inverse series
 if(match([:f](?a,0)));
 
-$i=count_(ep,1);
+$i=count_($var,1);
 multiply sum_([:z],1,($cut)-($i),[series::partition]([:z])*`$var'^[:z]);
 repeat id once [series::c]([:x]?,[:y]?)*[:f]([:z]?,0)=[series::c]([:x])^[:y]*[:z]^(-[:y])*[:f]([:z],0);
  $partitioncardinality=count_([series::c],1)-1;
