@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 #procedures to be included in the package
-my @include=qw(series.prc  invert.prc  partition.prc exp.prc log.prc power.prc createtable.prc toseries.prc init.prc invertfunction.prc expand.prc expfunction.prc logfunction.prc powerfunction.prc parallel.prc);
+my @include=qw(series.prc  invert.prc  partition.prc exp.prc log.prc power.prc createtable.prc toseries.prc init.prc invertfunction.prc expand.prc expfunction.prc logfunction.prc powerfunction.prc parallel.prc wrap.prc);
 #id.prc #multiply.prc #partition.tbl #simplepower.prc contractpowers.prc 
 
 #additional data/documentation

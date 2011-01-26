@@ -1,11 +1,11 @@
 #procedure exp(SOURCE,TARGET)
-*computes the logarithm of SOURCE, treating SOURCE as a series as specified by the procedure series
+*computes e^SOURCE, treating SOURCE as a series as specified by the procedure series
 * the result is saved in TARGET
 
 	#call toseries(`SOURCE',ta)
 	#define CUT "{`$cut'}"
 	#call createtable(tb,`CUT')
-*coefficients of inverted series
+*coefficients of result series
 	fill [:tb](0)=1;
 	skip;
 *now higher order terms
