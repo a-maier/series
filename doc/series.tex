@@ -7,15 +7,15 @@
 \subsection{Intro}
 
 The series FORM package tries to capture parts of the Mathematica {\tt
-  Series} functionality. It implements basic operations on a power
-series in one (and at some point maybe even more than one) variable
+  Series} functionality. It implements some operations on a power
+series in one variable
 (e.g. $\epsilon$) up to some cut-off power $\epsilon^{\text{cut}}$. The
-supported operations include basic replacements, multiplication of
-series and computing a series to some power (including e.g. the inverse and
+supported operations include expanding logarithms, the exponential
+function, generic user-defined functions and
+ computing a series to some power (including e.g. the inverse and
 the square root of the series), where the exponent can be another
-series. At the moment, several of these features {\em are turned of},
-mostly for performance reasons. It is recommended to use their
-standard FORM counterparts instead.
+series. For other basic operations like multiplication of two series it
+is recommended to use the somewhat faster built-in FORM commands.
 
 \subsection{Quick start}
 \label{sec:quick}
@@ -28,6 +28,7 @@ manuals. The rest may want to continue with Chapter \ref{sec:usage}.
 #include- series.h
 
 S ep;
+CF f;
 L foo=1-ep;
 
 *define a series variable and cut
@@ -36,6 +37,10 @@ L foo=1-ep;
 *invert foo & save result in the new expression bar
 #call invert(foo,bar)
 * now we have bar=foo^-1+O(ep^4)
+
+*expand f(foo) & save result in the expression bar
+#call wrap(foo,f,bar)
+
 drop foo,bar;
 
 * analogous procedures: exp, log, power
@@ -70,7 +75,7 @@ variable \mbox{FORMPATH} (see Chapter 1 of the FORM reference manual). The
 package tries to interfer as few as possible with the rest of your
 program, but there are some caveats:
 \begin{itemize}
-\item {\tt exp} and {\tt log} are sometimes defined as commuting
+\item {\tt exp}, {\tt log} and {\tt D} are sometimes defined as commuting
   functions inside some of the procedures. Do not misuse these names.
 \item Some procedure names are reserved. See also Chapter
   \ref{sec:namesp} on namespaces.
@@ -204,6 +209,24 @@ drop [-1];
 \end{verbatim}
 but more readable and faster.
 
+\subsubsection{wrap}
+\label{sec:wrap}
+
+This procedure expands a function (second argument) of an expression
+(first argument) 
+and stores it in the expression given as the second argument. 
+This expands $f(ep)$ up to order $ep^3$:
+\begin{verbatim}
+#include- series.h
+S ep;
+CF f;
+L [1]=ep;
+#call series(ep,3)
+#call wrap([1],f,[f(ep)])
+print [f(ep)];
+.end
+\end{verbatim}
+
 \subsubsection{init}
 \label{sec:invert}
 
@@ -220,7 +243,10 @@ pole and a cut of $5$ you shold use {\tt \#call init(6)})
 Tries to expand the function that is given as an argument. ``Known''
 functions are {\tt exp, log, ln, pow, power, den} and {\tt deno} (case sensitive). If
 your favourite logarithm function has the name {\tt Log}, try the
-procedure {\tt logfunction} instead. This example will compute the
+procedure {\tt logfunction} instead. If an ``unknown'' function is given
+as an argument, the result will be given in terms of derivatives of this function.
+
+This example will compute the
 inverse of $1+ep$:
 \begin{verbatim}
 #include- series.h
@@ -499,7 +525,7 @@ with the recursive representation (for expressions)
 \begin{align}
   \label{eq:inv_rec}
   b_0=&1\\
-  b_n=&-\sum_{i=0}^{n-1} a_{n-1}b_i 
+  b_n=&-\sum_{i=0}^{n-1} a_{n-i}b_i 
 \end{align}
 and the explicit representation (for functions)
 \begin{equation}
@@ -510,13 +536,83 @@ For the definitions of the partition set ${\cal P}$ and the
 multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
 exponentials.
 
+\subsubsection{Generic functions}
+\label{sec:generic_fun}
+
+Expanding a generic function
+\begin{equation}
+  \label{eq:generic_fun}
+  f\left(\sum_{i=0}^{\infty}a_i
+    \epsilon^i\right)=\sum_{i=0}^{\infty}b_i
+    \epsilon^i
+\end{equation}
+is only sensible if there are no poles in the argument.
+The $b_i$ are given by
+\begin{align}
+  \label{eq:generic_rec}
+  b_0=&f(a_0)\,,\\
+  b_n=&\partial\,\sum_{i=0}^{n-1}\frac{i}{n} a_{i}b_{n-i} \,,
+\end{align}
+where $\partial$ only acts on $f$ and
+\begin{equation}
+  \label{eq:partial}
+  \partial^n f(a_0) \equiv f^{(n)}(a_0) 
+\end{equation}
+is the $n-$th derivative of $f$ at $a_0$. $b_n$ can also be written as
+\begin{equation}
+  \label{eq:generic_expl}
+    b_n=
+\sum_{P \in {\cal P}(n)} \left(\prod_{l \in P} \frac{(a_l \;\partial)^{{\cal M}_P(l)}}{{\cal M}_P(l)!} f(a_0)\right)
+\end{equation}
+For the definitions of the partition set ${\cal P}$ and the
+multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
+exponentials.
+
 \subsection{Deprecated \& development}
 \label{sec:depr}
 
-This is a collection of procedures that are not included in the
+This is a collection of components that are not included in the
 distribution of the package. They are mostly deprecated or much too
 early in the development stage.
 
+\subsubsection{Multivariate series}
+\label{sec:multi_var}
+
+In principle one could try to expand not in only one variable, but in
+several variables at the same time. In many cases this is, however,
+ill-defined --- e.g. it is obviously not possible to expand $1/(x+y)$ in
+both $x$ and $y$ at the same time. For sufficiently well-behaved
+expressions one could use the formulas for a single variables in slightly
+generalised forms. 
+
+A convenient shorthand notation when considering $n+1$ expansion variables is to
+use tuples 
+\begin{align}
+\label{eq:multivar_conv}
+\vec{\epsilon}=&(\epsilon_0,\dots,\epsilon_n), \\
+\vec{0}=&(0,\dots,0), \\
+\sum_{\vec{\imath}}=&\sum_{i_0}\dots\sum_{i_n}, \\
+\vec{\epsilon}^{\;\vec{\imath}} =& \epsilon_0^{i_0 }\cdots\epsilon_n^{i_n}\,.
+\end{align}
+The recursive expression for expanding
+\begin{equation}
+  \label{eq:log_multivar}
+\log\left(\sum_{\vec{\imath}=\vec{0}}^{\vec{\infty}}a_{\vec{\imath}}\;
+ \vec{\epsilon}^{\;\vec{\imath}}\right)=\sum_{\vec{\imath}=\vec{0}}^{\vec{\infty}} b_{\vec{\imath}}\;\vec{\epsilon}^{\;\vec{\imath}}
+ \end{equation}
+with $a_{\vec{0}}=1$ for example becomes
+\begin{align}
+  \label{eq:rec_log_multivar}
+  b_{\vec{0}}=0\,,\\
+b_{\vec{\imath}}=a_{\vec{\imath}}+b_{\vec{\imath}}-\sum_{\vec{\jmath}=\vec{0}}^{\vec{\imath}}
+\frac{\overline{\imath}}{\overline{n}} a_{\vec{\imath}-\vec{\jmath}} b_{\vec{\jmath}}\,,
+ \end{align}
+where $\overline{\imath}$ is the arithmetic mean of all elements of the tuple
+$\vec{\imath}$. Of course, since only ratios appear, it can also be
+interpreted as the sum.
+
+A proof-of-concept implementation for multivariate series exists, but is
+not included in the package.
 
 \subsubsection{Simple Powers}
 \label{sec:impl_simpl_pow}
