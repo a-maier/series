@@ -1,0 +1,7 @@
+*.old
+*.aux
+*.pdf
+*.ps
+*.tgz
+*.log
+series.h
