@@ -1,54 +1,63 @@
 #procedure logfunction(LOG)
 *replaces the argument of `LOG' by its inverse
 *(the argument is considered as a series in $var up to power $cut)
-*TODO log(a)*log(b)=?
 
-*normalise
-$minpower=maxpowerof_(`$var');
-argument `LOG';
-term;
-if(count(`$var',1)<$minpower) $minpower=count_(`$var',1);
-endterm;
-endargument;
-id once `LOG'([:x]?)=
-*[:g] is only a placeholder for `LOG'
-[:g](`$var'^($minpower))+`LOG'((`$var')^(-($minpower))*[:x])
-;
-*rewrite into list of coefficients
-* i.e a product of [:f](coefficient, power of expansion variable)
-splitarg ((`$var')) `LOG';
-chainout `LOG';
-factarg `LOG';
+   while(match(`LOG'([:x]?)));
+      $minpow=maxpowerof_(`$var');
+      $minterm=0;
+      #do n=0,`$maxtermnum'
+	 $a`n'=0;
+      #enddo
 
-id `LOG'(?a)=[:f](?a,0);
-repeat id [:f](?a,`$var',?b,[:x]?)=[:f](?a,?b,[:x]+1);
-id [:f]([:x]?)=[:f](1,[:x]);
-repeat id [:f](?a,[:x]?,[:y]?,[:z]?)=[:f](?a,[:x]*[:y],[:z]);
-repeat id [:f]([:x]?,[:z]?)*[:f]([:y]?,[:z]?)=[:f]([:x]+[:y],[:z]);
+      once `LOG'([:x]?$x)=1;
 
-id once [:f](?a,0)= `LOG'(?a)+[:f](?a,0);
-id once [:g](?a)= `LOG'(?a);
-*compute coefficients of inverse series
-if(match([:f](?a,0)));
+*     determine leading term
+      inside $x;
+	 $c = count_($var,1);
+	 if($c<$minpow); 
+	    $minpow=count_($var,1);
+	    $minterm=term_();
+	    elseif($c==$minpow);
+	    $minterm=$minterm+term_();
+	 endif;
+      endinside;
 
-$i=count_($var,1);
-multiply sum_([:z],1,($cut)-($i),[series::partition]([:z])*`$var'^[:z]);
-repeat id once [series::c]([:x]?,[:y]?)*[:f]([:z]?,0)=[series::c]([:x])^[:y]*[:z]^(-[:y])*[:f]([:z],0);
- $partitioncardinality=count_([series::c],1)-1;
-*print "%t has cardinality %$" $partitioncardinality;
-if($partitioncardinality>0);
-multiply (-1)^($partitioncardinality)*fac_($partitioncardinality);
-endif;
-* insert coefficients
-* *optimise this line
-repeat id once [series::c]([:x]?)*[:f]([:z]?,[:x]?)=[:z]*[:f]([:z],[:x]);
+      $minterm = $minterm*$var^-$minpow;
 
-if(count([series::c],1)>0)discard;
+      $t = termsin_($minterm);
+      if($t==1);
+	 $invminterm = 1/$minterm;
+	 else;
+	 $invminterm = [:den]($minterm);
+      endif;
 
-else;
-id once `LOG'(1)=0;
-endif;
-id [:f](?a)=1;
+*     normalise log argument
+      $x =  1 + ($invminterm)*(($x)*($var)^(-($minpow)) - $minterm);
+
+*     determine coefficients
+*     this still needs a clever idea
+*     atm it's O($maxtermnum*termsin_($x)) but should be O(termsin_($x))
+      inside $x;
+	 $c=count_($var,1);
+	 if($c==0);
+	    $a0=$a0+term_();
+	    #do n=1,`$maxtermnum'
+	       elseif($c==`n');
+	       $a`n'=$a`n'+term_();
+	    #enddo
+	 endif;
+      endinside;
+      
+*     multiply by expanded logarithm
+      $lim = $cut - count_($var,1);
+      multiply (
+         + [:log](($minterm) * ($var)^($minpow))
+         + sum_([:i],1,$lim,[:b_log]([:i]))
+      );
+   endwhile;
+   
+*  restore original notion of logs
+   multiply replace_([:log],`LOG');
 
 
 #endprocedure

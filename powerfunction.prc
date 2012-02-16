@@ -3,33 +3,28 @@
 
 *uses `POW'(x,y)=exp(y*log(x))
 
-	$cut=`$cut'-count_(`$var',1);
-	id `POW'([:x]?,[:y]?)=[:exp]([:y]*[:log]([:x]));
+	$cut=$cut-count_($var,1);
+	id `POW'([:x]?,[:y]?)=[:EXP]([:y]*[:LOG]([:x]));
 	
-	argument [:exp];
-	#call logfunction([:log]);
-	id [:log](?a)=log(?a);
+	argument [:EXP];
+	   #call logfunction([:LOG]);
+	   multiply replace_([:LOG],log);
 	endargument;
 	
+*       restore original cut
 	$cut=`$cut';
-	#call expfunction([:exp]);
+	#call expfunction([:EXP]);
 *simplify a bit
-* 	splitarg [:exp];
-* 	chainout [:exp];
-* 	factarg [:exp];
-* 	id [:exp](?a,log([:x]?),?b)=[:exp](log([:x]),?a,?b);
-* 	repeat id [:exp](log([:x]?),[:y]?,[:z]?,?a)=[:exp](log([:x]),[:y]*[:z],?a);
-* 	repeat id [:exp](log([:x]?),[:y]?)*[:exp](log([:x]?),[:z]?)=[:exp](log([:x]),[:y]+[:z]);
-* 	id [:exp](log([:x]?),[:y]?)=`POW'(log([:x]),[:y]);
+* 	splitarg [:EXP];
+* 	chainout [:EXP];
+* 	factarg [:EXP];
+* 	id [:EXP](?a,log([:x]?),?b)=[:EXP](log([:x]),?a,?b);
+* 	repeat id [:EXP](log([:x]?),[:y]?,[:z]?,?a)=[:EXP](log([:x]),[:y]*[:z],?a);
+* 	repeat id [:EXP](log([:x]?),[:y]?)*[:EXP](log([:x]?),[:z]?)=[:EXP](log([:x]),[:y]+[:z]);
+* 	id [:EXP](log([:x]?),[:y]?)=`POW'(log([:x]),[:y]);
 
 
- 	id [:exp](?a)=exp(?a);
-
+	multiply replace_([:EXP],exp);
 
 #endprocedure
-
-
-* nskip [:tmp_pow];
-* b ep;
-* print;
 
