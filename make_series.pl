@@ -5,11 +5,11 @@ use strict;
 use warnings;
 
 #procedures to be included in the package
-my @include=qw(series.prc  invert.prc  partition.prc exp.prc log.prc power.prc  wrap.prc createtable.prc toseries.prc init.prc invertfunction.prc expand.prc expfunction.prc logfunction.prc powerfunction.prc wrapfunction.prc parallel.prc);
+my @include=qw(series.prc  invert.prc exp.prc log.prc power.prc  wrap.prc createtable.prc toseries.prc init.prc invertfunction.prc expand.prc expfunction.prc logfunction.prc powerfunction.prc wrapfunction.prc parallel.prc);
 #id.prc #multiply.prc #partition.tbl #simplepower.prc contractpowers.prc 
 
 #additional data/documentation
-my @data=qw(partition.tbl gen_partition_table.frm series_tst.frm doc/series.pdf);
+my @data=qw(series_tst.frm doc/series.pdf);
 
 
 open(OUT,">series.h") or die "Failed to open series.h: $!";
