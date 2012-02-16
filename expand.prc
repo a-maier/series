@@ -15,10 +15,8 @@
 #call invertfunction(den)
 #elseif `FUN'=="deno"
 #call invertfunction(deno)
-
 #else
-#message Don't know how to expand function `FUN'
-#terminate
+#call wrapfunction(`FUN')
 #endif
 
 

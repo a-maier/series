@@ -6,7 +6,7 @@ skip;
 .sort
 S [:x],[:y],[:z];
 cf [:f],[:g],[:exp],[:log];
-cf exp,log;
+cf exp,log,D;
 skip;
 .sort
 
