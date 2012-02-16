@@ -2,6 +2,9 @@
 *replaces the argument of `LOG' by its inverse
 *(the argument is considered as a series in $var up to power $cut)
 
+*  increase label number to make sure it's unique
+   #$labelnum=`$labelnum'+1;
+
    while(match(`LOG'([:x]?)));
       $minpow=maxpowerof_(`$var');
       $minterm=0;
@@ -50,9 +53,20 @@
       
 *     multiply by expanded logarithm
       $lim = $cut - count_($var,1);
+
+      #do n=1,`$maxtermnum'
+	 if(`n'>$lim) goto afterloop`$labelnum';
+	 $b`n' = $a`n'
+	 #do i=1,{`n'-1}
+	    - `i'/`n'*$a{`n'-`i'}*$b`i'
+	 #enddo
+	 ;
+      #enddo
+      label afterloop`$labelnum';
+
       multiply (
          + [:log](($minterm) * ($var)^($minpow))
-         + sum_([:i],1,$lim,[:b_log]([:i]))
+         + sum_([:i],1,$lim,[:b]([:i]))
       );
    endwhile;
    
