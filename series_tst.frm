@@ -62,6 +62,7 @@ endargument;
 id exp(log(c?))=c;
 if(count(ep,1)>`CUT')discard;
 .sort
+drop bar2,[-2],[-1/2];
 L [0]=foo-bar2;
 .sort
 #if termsin([0])>0
@@ -71,7 +72,7 @@ L [0]=foo-bar2;
 #message passed
 #endif
 
-#call init(`CUT')
+#call init({`CUT'+2})
 
 #message Test4: inverse function
 .sort
@@ -115,19 +116,13 @@ cf power;
 skip foo;
 L [0]=power(power(foo,-2),-1/2)-foo;
 argument power;
-#call expand(power)
+   #call expand(power)
+endargument;
+argument power;
+   id exp( - 2*log(ep^-2*c))=(ep^-2*c)^-2;
 endargument;
 #call expand(power)
-id 1/exp(c?)=exp(-c);
-id 1/(exp(c?)^2)=exp(-c)^2;
-id 1/(exp(c?)^3)=exp(-c)^3;
-repeat id exp(c?)*exp(d0?)=exp(c+d0);
-argument exp;
-id log(exp(c?))=c;
-endargument;
-splitarg exp;
-chainout exp;
-id exp(log(c?))=c;
+id exp( - 1/2*log(ep^4*c^-2))=ep^-2*c;
 .sort
 drop [0];
 #if termsin([0])>0
