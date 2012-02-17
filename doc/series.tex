@@ -89,37 +89,33 @@ There are two modes of usage: it is possible to either expand {\em expressions}
   functions}. These modes are very different in nature, both in their
 usage and in their internal implementations. 
 
-The first mode, operating on expressions, is more mature and probably
-significantly faster. Use this mode, if you can. First, you will want to
+The first mode, operating on expressions, is more mature. 
+First, you will want to
 call the procedure {\tt series}, e.g.
 \begin{verbatim}
 #call series(ep,7)
 \end{verbatim}
 This tells the package to treat all expressions as series in {\tt ep} up
 to power 7. After that, you can use one of the procedures {\tt log, exp,
-  power} or {\tt invert} with two expression names as arguments to perform the
-corresponding operation on the first argument and save the result in the
-second argument. See the Chapter \ref{sec:proc} on procedures to find
-out which procedure does what.
+  power, invert} or {\tt wrap} to compute series expansions. For a
+description of these procedures and examples see Chapter \ref{sec:proc}.
 
 \medskip
 
-The second mode, operating on functions, is not tested as well and
- a lot slower. In order to use it, you have to call the
-procedure {\tt init} first:
+The second mode, operating on functions, is not tested nearly as
+well. It has been rewritten completely for the latest version and should
+now be comparable to the expression mode as far as speed is concerned. 
+In order to use it, you have to call the procedure {\tt init} first:
 \begin{verbatim}
 #call init(9)
 \end{verbatim}
 Its argument is the highest number of terms in a series that will be
 computed. If it is set too low, some strange functions can appear in
-your expressions. Make sure that the file {\tt partition.tbl} is in your
-FORMPATH; this mode will not work if it is not found by FORM.
+your expressions.
 
 Like in the first mode, you have to call the {\tt series} procedure
-afterwards. In order to compute something, it is most convenient to call {\tt expand} to expand a
-function.
-
-
+afterwards. In order to compute something, it is most convenient to call
+{\tt expand} to expand a function.
 
 \section{Procedures}
 \label{sec:proc}
@@ -128,8 +124,8 @@ function.
 \subsubsection{series}
 \label{sec:series}
 
-Before you use any other procedure from the series package, you have to define a global
-series variable and a cut-off. This is done with the
+Before you use any other procedure from the series package, you have to
+define a global series variable and a cut-off. This is done with the
 procedure {\tt series}. The first parameter is the series variable, the
 second one is the highest power of that variable. For example
 \begin{verbatim}
@@ -278,8 +274,6 @@ L [1]=pow(1+ep,1+ep);
 print [1];
 .end
 \end{verbatim}
-Note that this procedure is probably {\it much slower} than its
-counterpart which works on expressions. Use it with care and only when needed.
 
 \subsubsection{logfunction}
 \label{sec:log_fun}
@@ -298,8 +292,6 @@ L [1]=log(1+ep);
 print [1];
 .end
 \end{verbatim}
-Note that this procedure is probably {\it much slower} than its
-counterpart which works on expressions. Use it with care and only when needed.
 
 \subsubsection{expfunction}
 \label{sec:exp_fun}
@@ -318,8 +310,6 @@ L [1]=exp(1+ep);
 print [1];
 .end
 \end{verbatim}
-Note that this procedure is probably {\it much slower} than its
-counterpart which works on expressions. Use it with care and only when needed.
 
 \subsubsection{invertfunction}
 \label{sec:inv_fun}
@@ -338,8 +328,6 @@ L [1]=den(1+ep);
 print [1];
 .end
 \end{verbatim}
-Note that this procedure is probably {\it much slower} than its
-counterpart which works on expressions. Use it with care and only when needed.
 
 \subsubsection{parallel}
 \label{sec:parallel}
@@ -359,11 +347,6 @@ For internal use only. Creates a table for storing expressions.
 \label{sec:toseries}
 
 For internal use only. Puts an expression into a previously defined table.
-
-\subsubsection{partition}
-\label{sec:toseries}
-
-For internal use only. Computes partitions of integer numbers.
 
 \subsection{Namespaces}
 \label{sec:namesp}
@@ -415,31 +398,9 @@ and express the coefficients $b_i$ in terms of the known $a_j$. We can
 distinguish between two kinds of formulations: the {\it recursive} representation,
 where $b_i$ is a function of $a_j$ and $b_k$ with $k < i$ and the {\it
   explicit} representation, where $b_i$ is a function of the $a_j$ only.
-We will usually try to find and use a recursive representation because
-it involves a lower number of terms. At the moment, the recursive
-representation is used for operations on expressions; for operation
-on function arguments ({\tt expfunction, logfunction,...}) I have not yet succeeded in
-implementing it and use the explicit representation instead.
-
-The explicit representations make heavy use of partitions.
-${\cal P}(n)$ is the set of partitions of $n$ i.e. for any
-Partition $P \in {\cal P}(n)$ the sum over all elements of $P$ is
-$n$. $|P|$ is the cardinality of $P$.
-${\cal M}_P(l)$ is the multiplicity of $l$ in a partition $P$. A simple
-example:
-\begin{align*}
-  {\cal P}(4)=&\{(1,1,1,1),\,(1,1,2),\,(1,3),\,(2,2),\,(4)\}\\
-  |(1,1,2)|=&3\\
-  {\cal M}_{(1,1,2)}(1)=&2\\
-  {\cal M}_{(1,1,2)}(2)=&1\\
-\end{align*}
-This means e.g. 
-\begin{equation}
-  \label{eq:exp_ex}
-\sum_{P \in {\cal P}(4)} \left(\prod_{l \in P} \frac{c^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)=
-  \frac{c_1^4}{4!}+\frac{c_1^2}{2!}\frac{c_2^1}{1!}+\frac{c_1^1}{1!}\frac{c_3^1}{1!}+\frac{c_2^2}{2!}+\frac{c_4^1}{1!}\,.
-\end{equation}
-
+The former one turns out to be far more efficient from the
+computational point of view. Therefore the procedures in the {\tt
+  series} package exclusively use recursive representations.
 
 \subsubsection{Exponentiation}
 \label{sec:impl_exp}
@@ -453,23 +414,11 @@ b_0=&1\\
 b_n =&  \sum_{i=1}^{n} \frac{i}{n} a_{i}b_{n-i}
 \end{align}
 
-An explicit representation of the $b_i$ is
-\begin{equation}
-  \label{eq:exp}
-  \begin{split}
-    b_n=
-\sum_{P \in {\cal P}(n)} \left(\prod_{l \in P} \frac{a^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)
-  \end{split}
-\end{equation}
-For the definitions of the partition set ${\cal P}$ and the
-multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
-exponentials.
- At the moment, however, the function version uses neither of the
- aforementioned formulas but instead just splits the
+ At the moment, however, the function version does not use this formula (yet?) but instead just splits the
  exponential function into a product and iteratively replaces
  \begin{equation}
    \label{eq:exp_simple}
-   exp(a_n \epsilon^n)=\sum_{i=1}^\infty a_n^i \epsilon^{n\cdot i}
+   \exp(a_n \epsilon^n)=\sum_{i=1}^\infty a_n^i \epsilon^{n\cdot i}
  \end{equation}
 up to the required order.
 
@@ -484,21 +433,12 @@ Logarithms are also required to compute complicated powers. Here I used
 \log\left(1+\sum_{i=1}^{\infty}a_i \epsilon^i\right)=&\sum_{n=1}^\infty
 b_n\epsilon^n\,.
 \end{align}
-I try to use the following recursive representation of the $b_n$:
+I use the following recursive representation of the $b_n$:
 \begin{align}
   \label{eq:log_rec}
 b_1=&a_1\\
 b_n =& a_n - \sum_{i=1}^{n-1} \frac{i}{n} a_{n-i}b_{i}
 \end{align}
-
-An explicit representation of the $b_n$ is
-\begin{equation}
-  \label{eq:log_expl}
-  b_n=\left[\sum_{P \in {\cal P}(n)} (-1)^{|P|-1}(|P|-1)!\left(\prod_{l \in P} \frac{a^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)\right]
-\end{equation}
-For the definitions of the partition set ${\cal P}$ and the
-multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
-exponentials.
 
 \subsubsection{Powers}
 \label{sec:impl_pow}
@@ -521,20 +461,12 @@ Here I use
     \epsilon^i\right)\\
 \left(1+\sum_{i=1}^{\infty}a_i \epsilon^i\right)^{-1}=\sum_{i=0}^{\infty}b_i \epsilon^i
 \end{align}
-with the recursive representation (for expressions)
+with the recursive representation
 \begin{align}
   \label{eq:inv_rec}
   b_0=&1\\
-  b_n=&-\sum_{i=0}^{n-1} a_{n-i}b_i 
+  b_n=&-\sum_{i=0}^{n-1} a_{n-i}b_i \,.
 \end{align}
-and the explicit representation (for functions)
-\begin{equation}
-  \label{eq:inv_expl}
-  b_n=\left[\sum_{P \in {\cal P}(n)} (-1)^{|P|}|P|!\left(\prod_{l \in P} \frac{a^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)\right]
-\end{equation}
-For the definitions of the partition set ${\cal P}$ and the
-multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
-exponentials.
 
 \subsubsection{Generic functions}
 \label{sec:generic_fun}
@@ -558,15 +490,7 @@ where $\partial$ only acts on $f$ and
   \label{eq:partial}
   \partial^n f(a_0) \equiv f^{(n)}(a_0) 
 \end{equation}
-is the $n-$th derivative of $f$ at $a_0$. $b_n$ can also be written as
-\begin{equation}
-  \label{eq:generic_expl}
-    b_n=
-\sum_{P \in {\cal P}(n)} \left(\prod_{l \in P} \frac{(a_l \;\partial)^{{\cal M}_P(l)}}{{\cal M}_P(l)!} f(a_0)\right)
-\end{equation}
-For the definitions of the partition set ${\cal P}$ and the
-multiplicity ${\cal M}_P$ see the section \ref{sec:impl_general} on
-exponentials.
+is the $n-$th derivative of $f$ at $a_0$. 
 
 \subsection{Deprecated \& development}
 \label{sec:depr}
@@ -574,6 +498,50 @@ exponentials.
 This is a collection of components that are not included in the
 distribution of the package. They are mostly deprecated or much too
 early in the development stage.
+
+\subsubsection{Explicit representations}
+
+Instead of the recursive representations discussed in
+Section~\ref{sec:impl} also explicit representations could be used.
+
+The explicit representations make heavy use of partitions.
+${\cal P}(n)$ is the set of partitions of $n$ i.e. for any
+Partition $P \in {\cal P}(n)$ the sum over all elements of $P$ is
+$n$. $|P|$ is the cardinality of $P$.
+${\cal M}_P(l)$ is the multiplicity of $l$ in a partition $P$. A simple
+example:
+\begin{align*}
+  {\cal P}(4)=&\{(1,1,1,1),\,(1,1,2),\,(1,3),\,(2,2),\,(4)\}\\
+  |(1,1,2)|=&3\\
+  {\cal M}_{(1,1,2)}(1)=&2\\
+  {\cal M}_{(1,1,2)}(2)=&1\\
+\end{align*}
+This means e.g. 
+\begin{equation}
+  \label{eq:exp_ex}
+\sum_{P \in {\cal P}(4)} \left(\prod_{l \in P} \frac{c^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)=
+  \frac{c_1^4}{4!}+\frac{c_1^2}{2!}\frac{c_2^1}{1!}+\frac{c_1^1}{1!}\frac{c_3^1}{1!}+\frac{c_2^2}{2!}+\frac{c_4^1}{1!}\,.
+\end{equation}
+Here is a table with the explicit representations for each operation:
+
+
+\begin{align}
+  &\text{exponential} & b_n=& \sum_{P \in {\cal P}(n)} \left(\prod_{l \in P}
+    \frac{a^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)
+  \notag\\
+  &\text{logarithm} & b_n=&\left[\sum_{P \in {\cal P}(n)}
+    (-1)^{|P|-1}(|P|-1)!\left(\prod_{l \in P} \frac{a^{{\cal
+            M}_P(l)}_l}{{\cal M}_P(l)!} \right)\right]
+  \notag\\
+  &\text{inverse} & b_n=&\left[\sum_{P \in {\cal P}(n)}
+    (-1)^{|P|}|P|!\left(\prod_{l \in P} \frac{a^{{\cal M}_P(l)}_l}{{\cal
+          M}_P(l)!} \right)\right]
+  \notag\\
+  &\text{generic function}& b_n=& \sum_{P \in {\cal P}(n)} \left(\prod_{l \in P}
+    \frac{(a_l \;\partial)^{{\cal M}_P(l)}}{{\cal M}_P(l)!}
+    f(a_0)\right)
+\label{eq:expl}
+\end{align}
 
 \subsubsection{Multivariate series}
 \label{sec:multi_var}
@@ -603,8 +571,8 @@ The recursive expression for expanding
 with $a_{\vec{0}}=1$ for example becomes
 \begin{align}
   \label{eq:rec_log_multivar}
-  b_{\vec{0}}=0\,,\\
-b_{\vec{\imath}}=a_{\vec{\imath}}+b_{\vec{\imath}}-\sum_{\vec{\jmath}=\vec{0}}^{\vec{\imath}}
+  b_{\vec{0}}=&0\,,\\
+b_{\vec{\imath}}=&a_{\vec{\imath}}+b_{\vec{\imath}}-\sum_{\vec{\jmath}=\vec{0}}^{\vec{\imath}}
 \frac{\overline{\imath}}{\overline{n}} a_{\vec{\imath}-\vec{\jmath}} b_{\vec{\jmath}}\,,
  \end{align}
 where $\overline{\imath}$ is the arithmetic mean of all elements of the tuple
