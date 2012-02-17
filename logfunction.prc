@@ -27,15 +27,8 @@
 
       $minterm = $minterm*$var^-$minpow;
 
-      $t = termsin_($minterm);
-      if($t==1);
-	 $invminterm = 1/$minterm;
-	 else;
-	 $invminterm = [:den]($minterm);
-      endif;
-
 *     normalise log argument
-      $x =  1 + ($invminterm)*(($x)*($var)^(-($minpow)) - $minterm);
+      $x =  1 + (($x)*($var)^(-($minpow)) - $minterm)/($minterm);
 
 *     determine coefficients
 *     this still needs a clever idea
