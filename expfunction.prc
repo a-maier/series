@@ -9,18 +9,20 @@ chainout `EXP';
 *expand each factor
 
 while(count(`EXP',1)>0);
-   once `EXP'(?a$a)=[:exp](?a);
+   once `EXP'(?a)=[:exp](?a);
    argument [:exp];
       $c = count_($var,1);
    endargument;
    if($c>0);
       $lim = $cut - count_($var,1);
-      once [:exp]([:x]?$x) = 
+      once [:exp]([:x]?) = 
       sum_([:i],0,integer_($lim/$c),([:x])^([:i])*invfac_([:i]));
+      else;
+      once [:exp](?a)=[:f](?a);
    endif;
 endwhile;
 
 *return unexpanded exponentials to original form
-multiply replace_([:exp],`EXP');
+multiply replace_([:f],`EXP');
 
 #endprocedure
