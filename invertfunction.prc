@@ -65,9 +65,10 @@
 	 ;
       #enddo
       label afterloop`$labelnum';
-      
-      multiply sum_([:i],0,$lim,[:b]([:i]));
-      
+
+      $sum=sum_([:i],0,$lim,[:b]([:i]));
+      multiply $sum;
+
    endwhile;
    
 *  restore original notion of denominators

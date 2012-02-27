@@ -50,7 +50,8 @@
       label afterloop`$labelnum';
       $b0=[:f]($a0);
 
-      multiply sum_([:i],0,$lim,[:b]([:i]));
+      $sum=sum_([:i],0,$lim,[:b]([:i]));
+      multiply $sum;
    
    endwhile;
 

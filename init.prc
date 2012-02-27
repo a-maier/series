@@ -21,5 +21,6 @@ table [:b](0:`CUT');
 #$lim=0;
 #$x=0;
 #$t=0;
+#$sum=0;
 
 #endprocedure
