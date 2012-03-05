@@ -1,12 +1,23 @@
-#procedure logfunction(LOG)
+#procedure logfunction(LOG,?SERIESSPEC)
 *replaces the argument of `LOG' by its inverse
 *(the argument is considered as a series in $var up to power $cut)
+
+   #ifdef `?SERIESSPEC'
+      #do ARG={`?SERIESSPEC'}
+	 #ifndef `VAR'
+            #define VAR "1"
+            $var = `ARG';
+	    #else
+            $cut = `ARG';
+	 #endif
+      #enddo
+   #endif
 
 *  increase label number to make sure it's unique
    #$labelnum=`$labelnum'+1;
 
    while(match(`LOG'([:x]?)));
-      $minpow=maxpowerof_(`$var');
+      $minpow=maxpowerof_([:x]);
       $minterm=0;
       #do n=0,`$maxtermnum'
 	 $a`n'=0;

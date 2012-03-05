@@ -1,6 +1,17 @@
-#procedure expfunction(EXP)
+#procedure expfunction(EXP,?SERIESSPEC)
 *replaces the argument arg of `EXP' by exp(arg)
 *(the argument is considered as a series in $var up to power $cut)
+
+   #ifdef `?SERIESSPEC'
+      #do ARG={`?SERIESSPEC'}
+	 #ifndef `VAR'
+            #define VAR "1"
+            $var = `ARG';
+	    #else
+            $cut = `ARG';
+	 #endif
+      #enddo
+   #endif
 
 *rewrite into product
 splitarg `EXP';

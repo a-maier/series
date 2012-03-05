@@ -1,12 +1,23 @@
-#procedure invertfunction(DENO)
+#procedure invertfunction(DENO,?SERIESSPEC)
 *replaces the argument of `DENO' by its inverse
 *(the argument is considered as a series in $var up to power $cut)
+   
+   #ifdef `?SERIESSPEC'
+      #do ARG={`?SERIESSPEC'}
+	 #ifndef `VAR'
+            #define VAR "1"
+            $var = `ARG';
+	    #else
+            $cut = `ARG';
+	 #endif
+      #enddo
+   #endif
 
 *  increase label number to make sure it's unique
    #$labelnum=`$labelnum'+1;
    
    while(match(`DENO'([:x]?)));
-      $minpow=maxpowerof_(`$var');
+      $minpow=maxpowerof_([:x]);
       $minterm=0;
       #do n=0,`$maxtermnum'
 	 $a`n'=0;
@@ -17,7 +28,7 @@
 *     determine leading term
       inside $x;
 	 $c = count_($var,1);
-	 if($c <$minpow); 
+	 if($c<$minpow); 
 	    $minpow=count_($var,1);
 	    $minterm=term_();
 	    elseif($c==$minpow);

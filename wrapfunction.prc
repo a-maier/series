@@ -1,6 +1,17 @@
-#procedure wrapfunction(FUN)
+#procedure wrapfunction(FUN,?SERIESSPEC)
 *expands function FUN
 *(the argument is considered as a series in $var up to power $cut)
+
+   #ifdef `?SERIESSPEC'
+      #do ARG={`?SERIESSPEC'}
+	 #ifndef `VAR'
+            #define VAR "1"
+            $var = `ARG';
+	    #else
+            $cut = `ARG';
+	 #endif
+      #enddo
+   #endif
 
 *  increase label number to make sure it's unique
    #$labelnum=`$labelnum'+1;
