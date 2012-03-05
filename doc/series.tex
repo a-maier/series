@@ -20,8 +20,8 @@ is recommended to use the somewhat faster built-in FORM commands.
 \subsection{Quick start}
 \label{sec:quick}
 
-This chapter is only for impatient people who do not like reading
-manuals. The rest may want to continue with Chapter \ref{sec:usage}.
+This section is mainly for impatient people who do not like reading
+manuals. The rest may want to continue with section \ref{sec:usage}.
 
 \begin{verbatim}
 *include series package
@@ -52,8 +52,11 @@ drop foo,bar;
 
 L foo=exp(1-ep)+exp(1+ep);
 
-*expand exponential  function
+*expand exponential function
 #call expand(exp)
+
+*alternative syntax
+*#call expand(exp,ep,3)
 
 *analogous: log, pow, den
 * den(x?)=x^-1
@@ -72,8 +75,8 @@ FORM program:
 Make sure that {\tt series.h} resides at some location where FORM will find
 it, preferably in one of the directories defined by the environment
 variable \mbox{FORMPATH} (see Chapter 1 of the FORM reference manual). The
-package tries to interfer as few as possible with the rest of your
-program, but there are some caveats:
+package tries hard not to interfere with the rest of your program, but
+there are some caveats:
 \begin{itemize}
 \item {\tt exp}, {\tt log} and {\tt D} are sometimes defined as commuting
   functions inside some of the procedures. Do not misuse these names.
@@ -102,7 +105,7 @@ description of these procedures and examples see Chapter \ref{sec:proc}.
 
 \medskip
 
-The second mode, operating on functions, is not tested nearly as
+The second mode, operating on functions, is not tested quite as
 well. It has been rewritten completely for the latest version and should
 now be comparable to the expression mode as far as speed is concerned. 
 In order to use it, you have to call the procedure {\tt init} first:
@@ -113,9 +116,28 @@ Its argument is the highest number of terms in a series that will be
 computed. If it is set too low, some strange functions can appear in
 your expressions.
 
-Like in the first mode, you have to call the {\tt series} procedure
-afterwards. In order to compute something, it is most convenient to call
-{\tt expand} to expand a function.
+After the initialisation there are two alternative ways to expand
+functions in power series. The first way is to call the {\tt series}
+procedure to set an expansion variable and a cut-off and then call 
+{\tt expand} to do the actual expansion:
+\begin{verbatim}
+#call series(ep,7)
+#call expand(f)
+#call expand(g)
+\end{verbatim}
+This is mainly useful when one wants to expand several different functions; it
+ensures that everything is expanded consistently in the same variable to
+the same power. Alternatively it is possible to give all information
+directly to {\tt expand}: 
+\begin{verbatim}
+#call expand(f,ep,7)
+\end{verbatim}
+
+For functions that are known to {\tt expand}, the result will be
+computed explicitly. This is the case for denominators ({\tt den,
+  deno}), logarithms ({\tt log, ln}), powers ({\tt pow, power}) and the
+exponential function ({\tt exp}). For other functions {\tt f} the result
+will be given in terms of formal {\tt n}th derivatives {\tt D(f(x),n)}.
 
 \section{Procedures}
 \label{sec:proc}
