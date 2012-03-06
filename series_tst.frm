@@ -98,8 +98,6 @@ argument exp;
 #call expand(log)
 endargument;
 #call expand(exp)
-splitarg exp;
-chainout exp;
 id exp(log(c?))=c;
 .sort
 drop [0];
