@@ -274,6 +274,8 @@ CF den;
 L [1]=den(1+ep);
 #call series(ep,3)
 #call expand(den)
+*alternative:
+*#call expand(den,ep,3)
 print [1];
 .end
 \end{verbatim}
@@ -436,14 +438,9 @@ b_0=&1\\
 b_n =&  \sum_{i=1}^{n} \frac{i}{n} a_{i}b_{n-i}
 \end{align}
 
- At the moment, however, the function version does not use this formula (yet?) but instead just splits the
- exponential function into a product and iteratively replaces
- \begin{equation}
-   \label{eq:exp_simple}
-   \exp(a_n \epsilon^n)=\sum_{i=1}^\infty a_n^i \epsilon^{n\cdot i}
- \end{equation}
-up to the required order.
-
+In principle one could also split the exponential function into factors
+and use the usual series representation up to the required order for
+each factor. In tests this has been slower by approximately a factor of fifty.
 
 \subsubsection{Logarithms}
 \label{sec:impl_log}
