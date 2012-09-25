@@ -9,10 +9,15 @@ my @include=qw(series.prc  invert.prc exp.prc log.prc power.prc  wrap.prc create
 #id.prc #multiply.prc #partition.tbl #simplepower.prc contractpowers.prc 
 
 #additional data/documentation
-my @data=qw(series_tst.frm doc/series.pdf);
+my @data=qw(COPYING series_tst.frm doc/series.pdf);
 
 
 open(OUT,">series.h") or die "Failed to open series.h: $!";
+
+#copyright note
+open(IN,'<',"copyright") or die "Failed to open copyright: $!";
+print OUT "* $_" while(<IN>);
+close IN;
 
 #overall header
 my $header='
