@@ -3,7 +3,7 @@
 #$maxtermnum=`CUT';
 #$labelnum=0;
 S [:x],[:y],[:i];
-cf [:exp],[:log],[:den],[:LOG],[:EXP];
+cf [:log],[:den],[:LOG],[:EXP];
 cf exp,log,D,[:f];
 
 table [:b](0:`CUT');

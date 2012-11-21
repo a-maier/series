@@ -59,10 +59,8 @@
       once `EXP'($x) = $sum;
 
       $t=termsin_($a0);
-      if($t>0) multiply [:exp]($a0);
+      if($t>0) multiply `EXP'($a0);
 	 
-*     restore original notion of exponential function
-      multiply replace_([:exp],`EXP');
    endif;
 
 #endprocedure
