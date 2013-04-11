@@ -1,4 +1,4 @@
-#procedure powerfunction(POW,?SERIESSPEC)
+#procedure expandPower(POW,?SERIESSPEC)
 *replaces `POW'(x,y) by x^y, treating both x and y as series (as specified by the procedure series)
 
 *uses `POW'(x,y)=exp(y*log(x))
@@ -19,13 +19,13 @@
    id `POW'([:x]?,[:y]?)=[:EXP]([:y]*[:LOG]([:x]));
 
    argument [:EXP];
-      #call logfunction([:LOG]);
+      #call expandLog([:LOG]);
       multiply replace_([:LOG],log);
    endargument;
 
 *  restore original cut
    $cut=$origcut;
-   #call expfunction([:EXP]);
+   #call expandExp([:EXP]);
 
    multiply replace_([:EXP],exp);
 

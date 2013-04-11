@@ -1,5 +1,5 @@
-#procedure invertfunction(DENO,?SERIESSPEC)
-*replaces the argument of `DENO' by its inverse
+#procedure expandFunction(FUN,?SERIESSPEC)
+*expands function FUN
 *(the argument is considered as a series in $var up to power $cut)
 
    #ifdef `?SERIESSPEC'
@@ -16,39 +16,13 @@
 *  increase label number to make sure it's unique
    #$labelnum=`$labelnum'+1;
 
-   while(match(`DENO'([:x]?)));
-      $minpow=maxpowerof_([:x]);
-      $minterm=0;
+   while(match(`FUN'([:x]?)));
+
       #do n=0,`$maxtermnum'
 	 $a`n'=0;
       #enddo
 
-      once `DENO'([:x]?$x)=1;
-
-*     determine leading term
-      inside $x;
-	 $c = count_($var,1);
-	 if($c<$minpow);
-	    $minpow=count_($var,1);
-	    $minterm=term_();
-	    elseif($c==$minpow);
-	    $minterm=$minterm+term_();
-	 endif;
-      endinside;
-
-      $minterm = ($minterm)*($var)^(-($minpow));
-
-      $t = termsin_($minterm);
-      if($t==1);
-	 $invminterm = 1/$minterm;
-	 else;
-	 $invminterm = [:den]($minterm);
-      endif;
-
-*     normalise denominator
-      $x =  1 + ($invminterm)*(($x)*($var)^(-($minpow)) - $minterm);
-
-      multiply $invminterm*$var^-$minpow;
+      once `FUN'([:x]?$x)=1;
 
 *     determine coefficients
 *     this still needs a clever idea
@@ -61,28 +35,37 @@
 	       elseif($c==`n');
 	       $a`n'=$a`n'+term_();
 	    #enddo
+	    elseif($c<0);
+	    print "negative power of %$ in argument of `FUN':" $var;
+	    print "   in term %t";
+	    print "   in `FUN'(%$)" $x;
+	    exit;
 	 endif;
       endinside;
 
-*     multiply by expanded inverse of normalised denominator
+*     multiply by expanded function
+
       $lim = $cut - count_($var,1);
-      $b0=1;
+      $b0=D([:f]($a0),0);
       #do n=1,`$maxtermnum'
 	 if(`n'>$lim) goto afterloop`$labelnum';
 	 $b`n' =
-	 #do i=0,{`n'-1}
-	    - $a{`n'-`i'}*$b`i'
+	 #do i=1,`n'
+	    + `i'/`n'*$a`i'*$b{`n'-`i'}
 	 #enddo
 	 ;
+	 inside $b`n';
+	    id D([:x]?,[:y]?)=D([:x],[:y]+1);
+	 endinside;
       #enddo
       label afterloop`$labelnum';
+      $b0=[:f]($a0);
 
       $sum=sum_([:i],0,$lim,[:b]([:i]));
       multiply $sum;
 
    endwhile;
 
-*  restore original notion of denominators
-   multiply replace_([:den],`DENO');
+   multiply replace_([:f],`FUN');
 
 #endprocedure

@@ -2,21 +2,21 @@
 *wrapper which calls the corresponding expansion procedure
 
    #if "`FUN'"=="exp"
-      #call expfunction(exp,`?a')
+      #call expandExp(exp,`?a')
       #elseif "`FUN'"=="log"
-      #call logfunction(log,`?a')
+      #call expandLog(log,`?a')
       #elseif "`FUN'"=="ln"
-      #call logfunction(ln,`?a')
+      #call expandLog(ln,`?a')
       #elseif "`FUN'"=="pow"
-      #call powerfunction(pow,`?a')
+      #call expandPower(pow,`?a')
       #elseif "`FUN'"=="power"
-      #call powerfunction(power,`?a')
+      #call expandPower(power,`?a')
       #elseif "`FUN'"=="den"
-      #call invertfunction(den,`?a')
+      #call expandDenominator(den,`?a')
       #elseif "`FUN'"=="deno"
-      #call invertfunction(deno,`?a')
+      #call expandDenominator(deno,`?a')
       #else
-      #call wrapfunction(`FUN',`?a')
+      #call expandFunction(`FUN',`?a')
    #endif
 
 #endprocedure

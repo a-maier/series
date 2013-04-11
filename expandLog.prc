@@ -1,4 +1,4 @@
-#procedure logfunction(LOG,?SERIESSPEC)
+#procedure expandLog(LOG,?SERIESSPEC)
 *replaces the argument of `LOG' by its inverse
 *(the argument is considered as a series in $var up to power $cut)
 
