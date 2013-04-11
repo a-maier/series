@@ -9,6 +9,8 @@
       #call expandPower(`FUN',`?a')
       #elseif ( ("`FUN'"=="den") || ("`FUN'"=="deno") )
       #call expandDenominator(`FUN',`?a')
+      #elseif "`FUN'"=="Gamma"
+      #call expandGamma(`FUN',`?a')
       #else
       #call expandFunction(`FUN',`?a')
    #endif
