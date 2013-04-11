@@ -4,45 +4,52 @@
 *   initially $`PART'SIZE should be set to 0
 *   the new partition will again be saved to 
 *   ($`PART'1,...,$`PART`$`PART'SIZE'')
-
+   
    #if `$`PART'SIZE' == 0
-*     initial partition
-      #$`PART'SIZE = 1;
-      #$`PART'1 = `N';
-      #$`PART'2 = 0;
+*     first partition
+      #call nextLongerPartition(`N',`PART')
       
       #elseif `$`PART'1' == 1
 *     last partition
       #$`PART'SIZE = 0;
       #$`PART'1 = 0;
-      
+
+      #elseif `$`PART'1' == 2
+      #call nextLongerPartition(`N',`PART')
+
       #else
-*     next partition:
-*     subtract 1 from an element e1
-*     and add 1 to the next element e2 which is smaller than e1-1
-*     if no such element e2 exists, add a 1 as a new element
-*     e1 is chosen in such a way that the partition is still
-*     sorted (in descending order) after this operation
-      #do i=1,`$`PART'SIZE'
-	 #if `$`PART'`i'' >  `$`PART'{`i'+1}'
-	    #$`PART'`i' = {`$`PART'`i''-1};
-	    #do j={`i'+1},{`$`PART'SIZE'+1}
-	       #if `$`PART'`j'' < `$`PART'`i''
-		  #$PART`j' = {`$`PART'`j''+1};
-		  #breakdo
-	       #endif
-	    #enddo
-*           check whether we just added a new element to the partition
-	    #if `$`PART'{`$`PART'SIZE'+1}' > 0
+*     next partition
+*     try tro find a pair of elements which differ by more than 1
+      #do i=2,{`$`PART'SIZE'+1}
+	 #if `$`PART'`i'' < {`$`PART'1'-1}
+	    #if `i' > `$`PART'SIZE'
 	       #$`PART'SIZE = {`$`PART'SIZE'+1};
 	       #$`PART'{`$`PART'SIZE'+1} = 0;
 	    #endif
+	    #define DIFF "1"
+	    #$`PART'`i' = {`$`PART'`i''+1};
+	    #do j=2,{`i'-1}
+	       #redefine DIFF "{`DIFF'+`$`PART'`i''-`$`PART'`j''}"
+	       #$`PART'`j' = `$`PART'`i'';
+	    #enddo
+	    #$`PART'1 = {`$`PART'1'-`DIFF'};
 	    #breakdo
 	 #endif
       #enddo
    #endif
-#preout off
 
+#endprocedure
+
+#procedure nextLongerPartition(N,PART)
+
+   #define LENGTH "{`$`PART'SIZE'+1}"
+   #$`PART'SIZE = `LENGTH';
+   #$`PART'1 = {`N'-`LENGTH'+1};
+   #do i=2,`LENGTH'
+      #$`PART'`i' = 1;
+   #enddo
+   #$`PART'{`LENGTH'+1} = 0;
+   
 #endprocedure
 
 #procedure computeMultiplicities(PART,MUL)
