@@ -11,7 +11,7 @@
 	 #endif
       #enddo
    #endif
-   
+
    #define l
 
 *  increase label number to make sure it's unique
@@ -50,13 +50,13 @@
 	    #if `$PARTSIZE' == 0
 *	       after last partition
 	       #breakdo
-	       
+
 	       #elseif `$PARTSIZE' == 1
 *              trivial partition
 	       $b`n' = psi(0,$a0)*$a`n';
 
 	       #else
-	       $b`n' = 
+	       $b`n' =
 	       + $b`n'
 	       + psi({`$PARTSIZE'-1},$a0)
 	       #do j=1,`$PARTSIZE',1
@@ -76,13 +76,12 @@
       #enddo
       label afterloop`$labelnum';
 
-*     multiply by expanded function 
+*     multiply by expanded function
       $sum= sum_([:i],0,$lim,[:b]([:i]));
       once `GAMMA'($x) = [:Gamma]($a0) * $sum;
 
    endwhile;
-   
-   multiply replace_([:Gamma],`GAMMA');
 
+   multiply replace_([:Gamma],`GAMMA');
 
 #endprocedure

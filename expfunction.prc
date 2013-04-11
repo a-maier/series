@@ -37,14 +37,14 @@
 	    #enddo
 	 endif;
       endinside;
-      
+
 *     determine coefficients of expanded function
       $lim = $cut - count_($var,1);
 
       $b0 = 1;
       #do n=1,`$maxtermnum'
 	 if(`n'>$lim) goto afterloop`$labelnum';
-	 $b`n' = 
+	 $b`n' =
 	 #do i=1,`n'
 	    + `i'/`n'*$a`i'*$b{`n'-`i'}
 	 #enddo
@@ -52,13 +52,13 @@
       #enddo
       label afterloop`$labelnum';
 
-*     multiply by expanded function 
+*     multiply by expanded function
       $sum=sum_([:i],0,$lim,[:b]([:i]));
       once `EXP'($x) = $sum;
 
       $t=termsin_($a0);
       if($t>0) multiply `EXP'($a0);
-	 
+
    endif;
 
 #endprocedure

@@ -23,7 +23,7 @@
       #$x=0;
       #$t=0;
       #$sum=0;
-      
+
       #else
       #ifndef `$IWarnedYou'
 	 #message WARNING: init called more than once

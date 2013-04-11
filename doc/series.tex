@@ -90,9 +90,9 @@ there are some caveats:
 There are two modes of usage: it is possible to either expand {\em expressions}
 (defined with the FORM instructions {\tt local} or {\tt global}) or {\em
   functions}. These modes are very different in nature, both in their
-usage and in their internal implementations. 
+usage and in their internal implementations.
 
-The first mode, operating on expressions, is more mature. 
+The first mode, operating on expressions, is more mature.
 First, you will want to
 call the procedure {\tt series}, e.g.
 \begin{verbatim}
@@ -107,7 +107,7 @@ description of these procedures and examples see Chapter \ref{sec:proc}.
 
 The second mode, operating on functions, is not tested quite as
 well. It has been rewritten completely for the latest version and should
-now be comparable to the expression mode as far as speed is concerned. 
+now be comparable to the expression mode as far as speed is concerned.
 In order to use it, you have to call the procedure {\tt init} first:
 \begin{verbatim}
 #call init(9)
@@ -118,7 +118,7 @@ your expressions.
 
 After the initialisation there are two alternative ways to expand
 functions in power series. The first way is to call the {\tt series}
-procedure to set an expansion variable and a cut-off and then call 
+procedure to set an expansion variable and a cut-off and then call
 {\tt expand} to do the actual expansion:
 \begin{verbatim}
 #call series(ep,7)
@@ -128,7 +128,7 @@ procedure to set an expansion variable and a cut-off and then call
 This is mainly useful when one wants to expand several different functions; it
 ensures that everything is expanded consistently in the same variable to
 the same power. Alternatively it is possible to give all information
-directly to {\tt expand}: 
+directly to {\tt expand}:
 \begin{verbatim}
 #call expand(f,ep,7)
 \end{verbatim}
@@ -219,7 +219,7 @@ it in the expression given as the second argument. Thus
 \begin{verbatim}
 #call  invert(series,result)
 \end{verbatim}
-is equivalent to 
+is equivalent to
 \begin{verbatim}
 L [-1]=-1;
 #call  power(series,[-1],result)
@@ -231,8 +231,8 @@ but more readable and faster.
 \label{sec:wrap}
 
 This procedure expands a function (second argument) of an expression
-(first argument) 
-and stores it in the expression given as the second argument. 
+(first argument)
+and stores it in the expression given as the second argument.
 This expands $f(ep)$ up to order $ep^3$:
 \begin{verbatim}
 #include- series.h
@@ -507,9 +507,9 @@ The $b_i$ are given by
 where $\partial$ only acts on $f$ and
 \begin{equation}
   \label{eq:partial}
-  \partial^n f(a_0) \equiv f^{(n)}(a_0) 
+  \partial^n f(a_0) \equiv f^{(n)}(a_0)
 \end{equation}
-is the $n-$th derivative of $f$ at $a_0$. 
+is the $n-$th derivative of $f$ at $a_0$.
 
 \subsection{Deprecated \& development}
 \label{sec:depr}
@@ -535,7 +535,7 @@ example:
   {\cal M}_{(1,1,2)}(1)=&2\\
   {\cal M}_{(1,1,2)}(2)=&1\\
 \end{align*}
-This means e.g. 
+This means e.g.
 \begin{equation}
   \label{eq:exp_ex}
 \sum_{P \in {\cal P}(4)} \left(\prod_{l \in P} \frac{c^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)=
@@ -570,10 +570,10 @@ several variables at the same time. In many cases this is, however,
 ill-defined --- e.g. it is obviously not possible to expand $1/(x+y)$ in
 both $x$ and $y$ at the same time. For sufficiently well-behaved
 expressions one could use the formulas for a single variables in slightly
-generalised forms. 
+generalised forms.
 
 A convenient shorthand notation when considering $n+1$ expansion variables is to
-use tuples 
+use tuples
 \begin{align}
 \label{eq:multivar_conv}
 \vec{\epsilon}=&(\epsilon_0,\dots,\epsilon_n), \\
@@ -631,7 +631,5 @@ not included in the package.
 This procedure is like the usual FORM {\tt multiply} statement, but does not
 compute any terms that will be thrown away. Still, it is too slow and
 not included in the package.
-
-
 
 \end{document}

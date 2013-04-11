@@ -28,7 +28,7 @@
 *     determine leading term
       inside $x;
 	 $c = count_($var,1);
-	 if($c<$minpow); 
+	 if($c<$minpow);
 	    $minpow=count_($var,1);
 	    $minterm=term_();
 	    elseif($c==$minpow);
@@ -54,7 +54,7 @@
 	    #enddo
 	 endif;
       endinside;
-      
+
 *     multiply by expanded logarithm
       $lim = $cut - count_($var,1);
 
@@ -74,7 +74,7 @@
          + ($sum)
       );
    endwhile;
-   
+
 *  restore original notion of logs
    multiply replace_([:log],`LOG');
 

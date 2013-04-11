@@ -1,7 +1,7 @@
 #procedure invertfunction(DENO,?SERIESSPEC)
 *replaces the argument of `DENO' by its inverse
 *(the argument is considered as a series in $var up to power $cut)
-   
+
    #ifdef `?SERIESSPEC'
       #do ARG={`?SERIESSPEC'}
 	 #ifndef `VAR'
@@ -15,7 +15,7 @@
 
 *  increase label number to make sure it's unique
    #$labelnum=`$labelnum'+1;
-   
+
    while(match(`DENO'([:x]?)));
       $minpow=maxpowerof_([:x]);
       $minterm=0;
@@ -28,7 +28,7 @@
 *     determine leading term
       inside $x;
 	 $c = count_($var,1);
-	 if($c<$minpow); 
+	 if($c<$minpow);
 	    $minpow=count_($var,1);
 	    $minterm=term_();
 	    elseif($c==$minpow);
@@ -63,13 +63,13 @@
 	    #enddo
 	 endif;
       endinside;
-      
+
 *     multiply by expanded inverse of normalised denominator
       $lim = $cut - count_($var,1);
       $b0=1;
       #do n=1,`$maxtermnum'
 	 if(`n'>$lim) goto afterloop`$labelnum';
-	 $b`n' = 
+	 $b`n' =
 	 #do i=0,{`n'-1}
 	    - $a{`n'-`i'}*$b`i'
 	 #enddo
@@ -81,7 +81,7 @@
       multiply $sum;
 
    endwhile;
-   
+
 *  restore original notion of denominators
    multiply replace_([:den],`DENO');
 

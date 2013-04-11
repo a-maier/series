@@ -2,13 +2,13 @@
 *   compute the next integer partition for N
 *   the current partition is given by ($`PART'1,...,$`PART`$`PART'SIZE'')
 *   initially $`PART'SIZE should be set to 0
-*   the new partition will again be saved to 
+*   the new partition will again be saved to
 *   ($`PART'1,...,$`PART`$`PART'SIZE'')
-   
+
    #if `$`PART'SIZE' == 0
 *     first partition
       #call nextLongerPartition(`N',`PART')
-      
+
       #elseif `$`PART'1' == 1
 *     last partition
       #$`PART'SIZE = 0;
@@ -49,7 +49,7 @@
       #$`PART'`i' = 1;
    #enddo
    #$`PART'{`LENGTH'+1} = 0;
-   
+
 #endprocedure
 
 #procedure computeMultiplicities(PART,MUL)
@@ -70,3 +70,4 @@
    #enddo
 
 #endprocedure
+

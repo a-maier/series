@@ -3,22 +3,18 @@
 * the result is saved in `TARGET'
 
 *uses TARGET=exp(EXP*log(BASE))
-	
-	#call log(`BASE',[:tmp_pow])
-	skip;
-*	#call multiply(`EXP',[:tmp_pow],[:tmp_pow_2])
-*	skip;
-	drop [:tmp_pow];
-	L [:tmp_pow_2]=`EXP'*[:tmp_pow];
-	#call exp([:tmp_pow_2],`TARGET')
-	skip;
-	drop [:tmp_pow_2];
-	.sort
+
+   #call log(`BASE',[:tmp_pow])
+   skip;
+*  #call multiply(`EXP',[:tmp_pow],[:tmp_pow_2])
+*  skip;
+   drop [:tmp_pow];
+   L [:tmp_pow_2]=`EXP'*[:tmp_pow];
+   #call exp([:tmp_pow_2],`TARGET')
+   skip;
+   drop [:tmp_pow_2];
+   .sort
 
 #endprocedure
 
-
-* nskip [:tmp_pow];
-* b ep;
-* print;
 

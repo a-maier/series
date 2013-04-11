@@ -44,7 +44,7 @@
       endinside;
 
 *     multiply by expanded function
-      
+
       $lim = $cut - count_($var,1);
       $b0=D([:f]($a0),0);
       #do n=1,`$maxtermnum'
@@ -63,7 +63,7 @@
 
       $sum=sum_([:i],0,$lim,[:b]([:i]));
       multiply $sum;
-   
+
    endwhile;
 
    multiply replace_([:f],`FUN');

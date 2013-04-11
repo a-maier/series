@@ -1,7 +1,7 @@
 #procedure parallel
-*contains the instructions that are necessary for 
+*contains the instructions that are necessary for
 * parallel execution of a module when the *function
-* procedures are used 
+* procedures are used
 
    moduleoption local $var,$cut;
    moduleoption local <$a0>,...,<$a`$maxtermnum'>;

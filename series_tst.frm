@@ -19,10 +19,10 @@ if(count(ep,1)>`CUT')discard;
 .sort
 drop [0];
 #if termsin([0])>0
-#message FAILED
-#redefine FAIL "{`FAIL'+1}"
-#else 
-#message passed
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
 #endif
 
 #message Test2: Exponentiation & Logarithm
@@ -38,10 +38,10 @@ id log(exp(c?))=c;
 .sort
 drop [0];
 #if termsin([0])>0
-#message FAILED
-#redefine FAIL "{`FAIL'+1}"
-#else 
-#message passed
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
 #endif
 
 #message Test3: Power
@@ -57,7 +57,7 @@ id 1/exp(c?)=exp(-c);
 repeat id exp(d0?)*exp(d1?)=exp(d0+d1);
 id exp(0)=1;
 argument exp;
-id log(exp(c?))=c;
+   id log(exp(c?))=c;
 endargument;
 id exp(log(c?))=c;
 if(count(ep,1)>`CUT')discard;
@@ -66,10 +66,10 @@ drop bar2,[-2],[-1/2];
 L [0]=foo-bar2;
 .sort
 #if termsin([0])>0
-#message FAILED
-#redefine FAIL "{`FAIL'+1}"
-#else 
-#message passed
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
 #endif
 
 #call init({`CUT'+2})
@@ -83,10 +83,10 @@ L [0]=foo*den(foo)-1;
 .sort
 drop [0];
 #if termsin([0])>0
-#message FAILED
-#redefine FAIL "{`FAIL'+1}"
-#else 
-#message passed
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
 #endif
 
 #message Test5: exponential & logarithm function
@@ -95,17 +95,17 @@ cf exp,log;
 skip foo;
 L [0]=exp(log(foo))-foo;
 argument exp;
-#call expand(log)
+   #call expand(log)
 endargument;
 #call expand(exp)
 id exp(log(c?))=c;
 .sort
 drop [0];
 #if termsin([0])>0
-#message FAILED
-#redefine FAIL "{`FAIL'+1}"
-#else 
-#message passed
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
 #endif
 
 #message Test6: power function
@@ -124,17 +124,17 @@ id exp( - 1/2*log(ep^4*c^-2))=ep^-2*c;
 .sort
 drop [0];
 #if termsin([0])>0
-#message FAILED
-#redefine FAIL "{`FAIL'+1}"
-#else 
-#message passed
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
 #endif
 
 
 #if `FAIL'==0
-#message All tests passed
-#else 
-#message Failed `FAIL'/`TESTS' tests
-#terminate 1
+   #message All tests passed
+   #else
+   #message Failed `FAIL'/`TESTS' tests
+   #terminate 1
 #endif
 .end
