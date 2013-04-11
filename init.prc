@@ -4,8 +4,8 @@
       #$maxtermnum=`CUT';
       #$labelnum=0;
       S [:x],[:y],[:i];
-      cf [:log],[:den],[:LOG],[:EXP];
-      cf exp,log,D,[:f];
+      cf [:log],[:den],[:Gamma],[:LOG],[:EXP];
+      cf exp,log,D,psi,[:f];
 
       table [:b](0:`CUT');
       #do n=0,`CUT'
