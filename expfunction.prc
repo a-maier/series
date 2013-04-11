@@ -21,8 +21,6 @@
       #do n=0,`$maxtermnum'
 	 $a`n'=0;
       #enddo
-      $minterm = 0;
-
 
 *     determine coefficients
 *     this still needs a clever idea
