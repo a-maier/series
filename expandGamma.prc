@@ -11,23 +11,8 @@
    #$labelnum=`$labelnum'+1;
 
    while(match(`GAMMA'([:x]?$x)));
-      #do n=0,`$maxtermnum'
-	 $a`n'=0;
-      #enddo
 
-*     determine coefficients
-      inside $x;
-	 $c=count_($var,1);
-	 if($c<0);
-	    print "argument of Gamma function `GAMMA'(%$)" $x;
-	    print "contains negative powers of %$ and cannot be expanded" $var;
-	    exit;
-	    #do n=0,`$maxtermnum'
-	       elseif($c==`n');
-	       $a`n'=$a`n'+term_();
-	    #enddo
-	 endif;
-      endinside;
+      #call getCoefficients(x,$var,`$maxtermnum',a)
 
 *     determine coefficients of expanded function
       $lim = $cut - count_($var,1);

@@ -11,25 +11,23 @@
 
    repeat id `EXP'([:x]?)*`EXP'([:y]?) = `EXP'([:x]+[:y]);
    if(match(`EXP'([:x]?$x)));
-      #do n=0,`$maxtermnum'
-	 $a`n'=0;
-      #enddo
 
-*     determine coefficients
-*     this still needs a clever idea
-*     atm it's O($maxtermnum*termsin_($x)) but should be O(termsin_($x))
+*     extract negative powers (not expandable)
+      $minterm = 0;
       inside $x;
-	 $c=count_($var,1);
-	 if($c<1);
-*           also negative powers go here, because we cannot expand them
-*           would be nice to have a warning, but could easily lead to spam
-            $a0 = $a0 + term_();
-	    #do n=1,`$maxtermnum'
-	       elseif($c==`n');
-	       $a`n'=$a`n'+term_();
-	    #enddo
+	 $c = count_($var,1);
+	 if($c<0);
+	    $minterm = $minterm+term_();
 	 endif;
       endinside;
+      $t = termsin_($minterm);
+      if($t>0);
+	 print "WARNING: `EXP'(%$)" $x;
+	 print "   contains negative powers of %$ ,%"  $var;
+	 print "which cannot be expanded";
+      endif;
+
+      #call getCoefficients(x,$var,`$maxtermnum',a)
 
 *     determine coefficients of expanded function
       $lim = $cut - count_($var,1);

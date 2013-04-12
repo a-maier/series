@@ -12,9 +12,6 @@
    while(match(`DENO'([:x]?)));
       $minpow=maxpowerof_([:x]);
       $minterm=0;
-      #do n=0,`$maxtermnum'
-	 $a`n'=0;
-      #enddo
 
       once `DENO'([:x]?$x)=1;
 
@@ -43,19 +40,7 @@
 
       multiply $invminterm*$var^-$minpow;
 
-*     determine coefficients
-*     this still needs a clever idea
-*     atm it's O($maxtermnum*termsin_($x)) but should be O(termsin_($x))
-      inside $x;
-	 $c=count_($var,1);
-	 if($c==0);
-	    $a0=$a0+term_();
-	    #do n=1,`$maxtermnum'
-	       elseif($c==`n');
-	       $a`n'=$a`n'+term_();
-	    #enddo
-	 endif;
-      endinside;
+      #call getCoefficients(x,$var,`$maxtermnum',a)
 
 *     multiply by expanded inverse of normalised denominator
       $lim = $cut - count_($var,1);
