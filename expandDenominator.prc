@@ -3,14 +3,7 @@
 *(the argument is considered as a series in $var up to power $cut)
 
    #ifdef `?SERIESSPEC'
-      #do ARG={`?SERIESSPEC'}
-	 #ifndef `VAR'
-            #define VAR "1"
-            $var = `ARG';
-	    #else
-            $cut = `ARG';
-	 #endif
-      #enddo
+      #call localSeries(`?SERIESSPEC')
    #endif
 
 *  increase label number to make sure it's unique
@@ -84,5 +77,9 @@
 
 *  restore original notion of denominators
    multiply replace_([:den],`DENO');
+
+   #ifdef `?SERIESSPEC'
+      #call restoreSeries
+   #endif
 
 #endprocedure

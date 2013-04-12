@@ -3,14 +3,7 @@
 *(the argument is considered as a series in $var up to power $cut)
 
    #ifdef `?SERIESSPEC'
-      #do ARG={`?SERIESSPEC'}
-	 #ifndef `VAR'
-            #define VAR "1"
-            $var = `ARG';
-	    #else
-            $cut = `ARG';
-	 #endif
-      #enddo
+      #call localSeries(`?SERIESSPEC')
    #endif
 
 *  increment label number to make sure it's unique
@@ -60,5 +53,9 @@
       if($t>0) multiply `EXP'($a0);
 
    endif;
+
+   #ifdef `?SERIESSPEC'
+      #call restoreSeries
+   #endif
 
 #endprocedure

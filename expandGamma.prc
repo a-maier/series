@@ -2,14 +2,7 @@
 * expand Gamma functions in $var up to power $cut
 
    #ifdef `?SERIESSPEC'
-      #do ARG={`?SERIESSPEC'}
-	 #ifndef `VAR'
-            #define VAR "1"
-            $var = `ARG';
-	    #else
-            $cut = `ARG';
-	 #endif
-      #enddo
+      #call localSeries(`?SERIESSPEC')
    #endif
 
    #define l
@@ -83,5 +76,9 @@
    endwhile;
 
    multiply replace_([:Gamma],`GAMMA');
+
+   #ifdef `?SERIESSPEC'
+      #call restoreSeries
+   #endif
 
 #endprocedure

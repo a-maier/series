@@ -4,14 +4,7 @@
 *uses `POW'(x,y)=exp(y*log(x))
 
    #ifdef `?SERIESSPEC'
-      #do ARG={`?SERIESSPEC'}
-	 #ifndef `VAR'
-            #define VAR "1"
-            $var = `ARG';
-	    #else
-            $cut = `ARG';
-	 #endif
-      #enddo
+      #call localSeries(`?SERIESSPEC')
    #endif
 
    $origcut = $cut;
@@ -28,6 +21,10 @@
    #call expandExp([:EXP]);
 
    multiply replace_([:EXP],exp);
+
+   #ifdef `?SERIESSPEC'
+      #call restoreSeries
+   #endif
 
 #endprocedure
 
