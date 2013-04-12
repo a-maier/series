@@ -130,6 +130,22 @@ drop [0];
    #message passed
 #endif
 
+#message Test7: local expansion variable
+.sort
+s x;
+cf den;
+l [0x] = 1-(1-x)*den(1-x);
+l [0ep] = 1-(1-ep)*den(1-ep);
+#call expand(den,x,{`CUT'-1})
+#call expand(den)
+.sort
+drop [0x],[0ep];
+#if (termsin([0x])>0) || (termsin([0ep])>0)
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
+#endif
 
 #if `FAIL'==0
    #message All tests passed
