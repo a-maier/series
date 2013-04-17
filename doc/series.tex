@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{amsmath}
+\usepackage{amsfonts}
 
 \begin{document}
 \section{The series package}
@@ -9,12 +10,17 @@
 The series FORM package tries to capture parts of the Mathematica {\tt
   Series} functionality. It implements some operations on a power
 series in one variable
-(e.g. $\epsilon$) up to some cut-off power $\epsilon^{\text{cut}}$. The
-supported operations include expanding logarithms, the exponential
-function, generic user-defined functions and
- computing a series to some power (including e.g. the inverse and
-the square root of the series), where the exponent can be another
-series. For other basic operations like multiplication of two series it
+(e.g. $\epsilon$) up to some cut-off power $\epsilon^{\text{cut}}$. In
+the current version the following functions can be expanded:
+\begin{itemize}
+\item denominators
+\item logarithms
+\item exponentials
+\item series to some power, which can again be a series
+\item Gamma functions
+\item generic user-defined functions
+\end{itemize}
+For other basic operations like the multiplication of two series it
 is recommended to use the somewhat faster built-in FORM commands.
 
 \subsection{Quick start}
@@ -43,7 +49,7 @@ L foo=1-ep;
 
 drop foo,bar;
 
-* analogous procedures: exp, log, power
+* analogous procedures: exp, log, Gamma, power
 * the procedure power(foo,bar,foobar) would compute foobar=foo^bar
 
 
@@ -58,7 +64,7 @@ L foo=exp(1-ep)+exp(1+ep);
 *alternative syntax
 *#call expand(exp,ep,3)
 
-*analogous: log, pow, den
+*analogous: log, pow, den, Gamma
 * den(x?)=x^-1
 
 .end
@@ -78,10 +84,11 @@ variable \mbox{FORMPATH} (see Chapter 1 of the FORM reference manual). The
 package tries hard not to interfere with the rest of your program, but
 there are some caveats:
 \begin{itemize}
-\item {\tt exp}, {\tt log} and {\tt D} are sometimes defined as commuting
-  functions inside some of the procedures. Do not misuse these names.
-\item Some procedure names are reserved. See also Chapter
-  \ref{sec:namesp} on namespaces.
+\item {\tt exp}, {\tt log}, {\tt psi}, {\tt Gamma} and {\tt D} are
+  sometimes defined as commuting functions inside some of the
+  procedures. Do not misuse these names.
+\item Some procedure names are reserved. See sections \ref{sec:proc} and
+  \ref{sec:proc_internal} for a list.
 \item Refrain from  using any symbols, expressions, etc. of the form
   {\tt[series::{\it name}]}. They are reserved. Dollar variables {\tt
     \$series{\it name}} are also a bad idea.
@@ -92,23 +99,20 @@ There are two modes of usage: it is possible to either expand {\em expressions}
   functions}. These modes are very different in nature, both in their
 usage and in their internal implementations.
 
-The first mode, operating on expressions, is more mature.
-First, you will want to
+For the former mode, operating on expressions you will first want to
 call the procedure {\tt series}, e.g.
 \begin{verbatim}
 #call series(ep,7)
 \end{verbatim}
 This tells the package to treat all expressions as series in {\tt ep} up
 to power 7. After that, you can use one of the procedures {\tt log, exp,
-  power, invert} or {\tt wrap} to compute series expansions. For a
+  power, invert, Gamma} or {\tt wrap} to compute series expansions. For a
 description of these procedures and examples see Chapter \ref{sec:proc}.
 
 \medskip
 
-The second mode, operating on functions, is not tested quite as
-well. It has been rewritten completely for the latest version and should
-now be comparable to the expression mode as far as speed is concerned.
-In order to use it, you have to call the procedure {\tt init} first:
+In order to use the second mode, operating on functions, you have to
+call the procedure {\tt init} first:
 \begin{verbatim}
 #call init(9)
 \end{verbatim}
@@ -127,17 +131,32 @@ procedure to set an expansion variable and a cut-off and then call
 \end{verbatim}
 This is mainly useful when one wants to expand several different functions; it
 ensures that everything is expanded consistently in the same variable to
-the same power. Alternatively it is possible to give all information
+the same power. 
+
+Alternatively it is possible to give all information
 directly to {\tt expand}:
 \begin{verbatim}
 #call expand(f,ep,7)
 \end{verbatim}
+In this case any existing series specifications will be restored
+afterwards:
+\begin{verbatim}
+#call series(ep,7)
+* expand f in ep up to ep^7
+#call expand(f)
+* expand g in delta up to delta^3
+#call expand(g,delta,3)
+* expand h in ep up to ep^7
+#call expand(h)
+\end{verbatim}
+
 
 For functions that are known to {\tt expand}, the result will be
 computed explicitly. This is the case for denominators ({\tt den,
-  deno}), logarithms ({\tt log, ln}), powers ({\tt pow, power}) and the
-exponential function ({\tt exp}). For other functions {\tt f} the result
-will be given in terms of formal {\tt n}th derivatives {\tt D(f(x),n)}.
+deno}), logarithms ({\tt log, ln}), powers ({\tt pow, power}), the
+exponential function ({\tt exp}) and the Gamma function ({\tt Gamma}).
+For other functions {\tt f} the result will be given in terms of formal
+{\tt n}th derivatives {\tt D(f(x),n)}.
 
 \section{Procedures}
 \label{sec:proc}
@@ -146,7 +165,7 @@ will be given in terms of formal {\tt n}th derivatives {\tt D(f(x),n)}.
 \subsubsection{series}
 \label{sec:series}
 
-Before you use any other procedure from the series package, you have to
+Usually, before you use any other procedure from the series package, you have to
 define a global series variable and a cut-off. This is done with the
 procedure {\tt series}. The first parameter is the series variable, the
 second one is the highest power of that variable. For example
@@ -227,6 +246,24 @@ drop [-1];
 \end{verbatim}
 but more readable and faster.
 
+\subsubsection{Gamma}
+\label{sec:gamma}
+
+Like {\tt log} (section~\ref{sec:log}), but computes the
+Gamma function. The result can contain polygamma functions denoted as
+{\tt psi}. Note that no special attention is paid to poles.
+Compute $\Gamma(1+ep)$ up to order $ep^3$:
+\begin{verbatim}
+#include- series.h
+S ep;
+L [1]=ep;
+#call series(ep,3)
+#call Gamma([1],[Gamma(1+ep)])
+print [Gamma(1+ep)];
+.end
+\end{verbatim} 
+
+
 \subsubsection{wrap}
 \label{sec:wrap}
 
@@ -259,10 +296,11 @@ pole and a cut of $5$ you shold use {\tt \#call init(6)})
 \label{sec:expand}
 
 Tries to expand the function that is given as an argument. ``Known''
-functions are {\tt exp, log, ln, pow, power, den} and {\tt deno} (case sensitive). If
-your favourite logarithm function has the name {\tt Log}, try the
-procedure {\tt logfunction} instead. If an ``unknown'' function is given
-as an argument, the result will be given in terms of derivatives of this function.
+functions are {\tt exp, log, ln, pow, power, den, deno} and {\tt Gamma}
+(case sensitive). If your favourite logarithm function has the name {\tt
+Log}, try the procedure {\tt expandLog} instead. If an ``unknown''
+function is given as an argument, the result will be given in terms of
+symbolic derivatives of this function.
 
 This example will compute the
 inverse of $1+ep$:
@@ -280,13 +318,12 @@ print [1];
 .end
 \end{verbatim}
 
-\subsubsection{powerfunction}
+\subsubsection{expandPower}
 \label{sec:pow_fun}
 
-This procedure also computes a series to some power, but works on
-functions instead of expressions. The argument of {\tt powerfunction} is
-the name of the function, the function's first argument is the base and
-the second argument is the exponent. This example will again compute $(1+ep)^{1+ep}$:
+This procedure expands power functions $\mathtt{fun(x,y)} = x^y$. The
+argument of {\tt expandPower} is the name of the function. This example
+will compute $(1+ep)^{1+ep}$:
 \begin{verbatim}
 #include- series.h
 #call init(3)
@@ -294,17 +331,16 @@ S ep;
 CF pow;
 L [1]=pow(1+ep,1+ep);
 #call series(ep,3)
-#call powerfunction(pow)
+#call expandPower(pow)
 print [1];
 .end
 \end{verbatim}
 
-\subsubsection{logfunction}
+\subsubsection{expandLog}
 \label{sec:log_fun}
 
-This procedure also computes the logarithm of a series, but works on
-functions instead of expressions. The argument of {\tt logfunction} is
-the name of the logarithm function. This example will again compute $\log(1+ep)$:
+This procedure expands logarithms. The argument of {\tt expandLog} is the name of the
+logarithm function. This example will compute $\log(1+ep)$:
 \begin{verbatim}
 #include- series.h
 #call init(3)
@@ -312,17 +348,17 @@ S ep;
 CF log;
 L [1]=log(1+ep);
 #call series(ep,3)
-#call logfunction(log)
+#call expandLog(log)
 print [1];
 .end
 \end{verbatim}
 
-\subsubsection{expfunction}
+\subsubsection{expandExp}
 \label{sec:exp_fun}
 
-This procedure also computes the exponential of a series, but works on
-functions instead of expressions. The argument of {\tt expfunction} is
-the name of the exponential function. This example will again compute $e^{1+ep}$:
+This procedure expands the exponential function. The argument of {\tt
+expandExp} is the name of the exponential function. This example will
+compute $e^{1+ep}$:
 \begin{verbatim}
 #include- series.h
 #call init(3)
@@ -330,17 +366,17 @@ S ep;
 CF exp;
 L [1]=exp(1+ep);
 #call series(ep,3)
-#call expfunction(exp)
+#call expandExp(exp)
 print [1];
 .end
 \end{verbatim}
 
-\subsubsection{invertfunction}
+\subsubsection{expandDenominator}
 \label{sec:inv_fun}
 
-This procedure also computes the inverse of a series, but works on
-functions instead of expressions. The argument of {\tt invertfunction} is
-the name of the function whose argument is to be inverted. This example will compute $1/(1+ep)$:
+This procedure expands denominators. The argument of {\tt
+expandDenominator} is the name of the function whose argument is to be
+inverted. This example will compute $1/(1+ep)$:
 \begin{verbatim}
 #include- series.h
 #call init(3)
@@ -348,7 +384,47 @@ S ep;
 CF den;
 L [1]=den(1+ep);
 #call series(ep,3)
-#call invertfunction(den)
+#call expandDenominator(den)
+print [1];
+.end
+\end{verbatim}
+
+\subsubsection{expandGamma}
+\label{sec:exp_Gamma}
+
+This procedure expands Gamma functions. The argument of {\tt expandGamma} is
+the name of the Gamma function. The expansion will usually contain polygamma
+functions denoted as {\tt psi}. No special attention is paid to
+poles. It is left to the user to first extract singularities.
+This example will compute $\Gamma(1+ep)$:
+\begin{verbatim}
+#include- series.h
+#call init(3)
+S ep;
+CF Gamma;
+L [1]=Gamma(1+ep);
+#call series(ep,3)
+#call expandGamma(Gamma)
+print [1];
+.end
+\end{verbatim}
+
+\subsubsection{expandFunction}
+\label{sec:inv_fun}
+
+This procedure expands a generic function. The argument of {\tt
+expandDenominator} is the name of the function. The expansion will
+contain symbolic derivatives of the function; it is assumed that the
+function and its derivatives are regular.
+This example will expand $f(1+ep)$ in $ep$:
+\begin{verbatim}
+#include- series.h
+#call init(3)
+S ep;
+CF den;
+L [1]=f(1+ep);
+#call series(ep,3)
+#call expandDenominator(den)
 print [1];
 .end
 \end{verbatim}
@@ -357,20 +433,28 @@ print [1];
 \label{sec:parallel}
 
 Usually parallel processing is turned of for modules containing
-procedures which expand functions ({\tt expand, *function}) because of
+procedures which expand functions ({\tt expand*}) because of
 dollar variables. If you need
 parallel computing call the {\tt parallel} procedure {\em directly}
   before the end of the module.
 
-\subsubsection{createtable}
-\label{sec:createtable}
-
-For internal use only. Creates a table for storing expressions.
-
-\subsubsection{toseries}
-\label{sec:toseries}
-
-For internal use only. Puts an expression into a previously defined table.
+\subsection{Internal Procedures}
+\label{sec:proc_internal}
+These procedures are for internal use. They are listed here so that name
+clashes can be avoided.
+\begin{itemize}
+\item {\tt createtable} creates a table for storing expressions.
+\item {\tt toseries} puts an expression into a previously defined table.
+\item {\tt getCoefficients} extracts the coefficients from a series.
+\item {\tt localSeries} resets the expansion variable and order, storing
+  the old specification
+\item {\tt restoreSeries} restores the expansion variable and order.
+\item {\tt nextPartition} creates the next partition for a given integer.
+\item {\tt nextLongerPartition} creates the next partition containing
+  more elements than the current one.
+\item {\tt computeMultiplicities} computes the multiplicities of the
+  elements in a partition.
+\end{itemize}
 
 \subsection{Namespaces}
 \label{sec:namesp}
@@ -465,7 +549,7 @@ b_n =& a_n - \sum_{i=1}^{n-1} \frac{i}{n} a_{n-i}b_{i}
 Powers $y$ of series $x$ are computed using the formula
 \begin{equation}
   \label{eq:pow}
-  x^y=\exp(y*log(x))\,.
+  x^y=\exp(y*\log(x))\,.
 \end{equation}
 
 
@@ -475,8 +559,8 @@ Powers $y$ of series $x$ are computed using the formula
 Here I use
 \begin{align}
   \label{eq:inv}
-  \left(\sum_{i=k_0}^{\infty}c_i
-    \epsilon^i\right)=c_{k_0}\epsilon^{k_0}\left(1+\sum_{i=1}^{\infty}a_i
+  \sum_{i=k_0}^{\infty}c_i
+    \epsilon^i=c_{k_0}\epsilon^{k_0}\left(1+\sum_{i=1}^{\infty}a_i
     \epsilon^i\right)\\
 \left(1+\sum_{i=1}^{\infty}a_i \epsilon^i\right)^{-1}=\sum_{i=0}^{\infty}b_i \epsilon^i
 \end{align}
@@ -486,6 +570,42 @@ with the recursive representation
   b_0=&1\\
   b_n=&-\sum_{i=0}^{n-1} a_{n-i}b_i \,.
 \end{align}
+
+\subsubsection{Gamma Function}
+\label{sec:impl_gamma}
+
+For $-a_0 \notin \mathbb{N}_0$ the series expansion has the following
+form:
+\begin{equation}
+  \label{eq:gamma}
+  \Gamma\left(\sum_{i=0}^\infty a_i\epsilon^i\right) =
+  \Gamma(a_0)\times\left(1+\sum_{i=1}^\infty b_i\epsilon^i\right)\,.
+\end{equation}
+The coefficient $b_i$ can be determined by solving
+\begin{equation}
+  \label{eq:gamma_rec}
+  0 = \sum_{P \in \mathcal{P}(i)} \psi_{|P|-1}(a_0)\prod_{l\in
+    P}\frac{a_l^{{\cal M}_P(l)}}{{\cal M}_P(l)!}
++ (|P|-1)!\*\prod_{l \in P}\frac{(-b_l)^{{\cal M}_P(l)}}{{\cal M}_P(l)!}\,.
+\end{equation}
+${\cal P}(i)$ is the set of partitions of $i$ i.e. for any
+Partition $P \in {\cal P}(i)$ the sum over all elements of $P$ is
+$i$. $|P|$ is the cardinality of $P$.
+${\cal M}_P(l)$ is the multiplicity of $l$ in a partition $P$. A simple
+example:
+\begin{align*}
+  {\cal P}(4)=&\{(1,1,1,1),\,(1,1,2),\,(1,3),\,(2,2),\,(4)\}\\
+  |(1,1,2)|=&3\\
+  {\cal M}_{(1,1,2)}(1)=&2\\
+  {\cal M}_{(1,1,2)}(2)=&1\\
+\end{align*}
+This means e.g.
+\begin{equation}
+  \label{eq:exp_ex}
+\sum_{P \in {\cal P}(4)} \left(\prod_{l \in P} \frac{a^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)=
+  \frac{a_1^4}{4!}+\frac{a_1^2}{2!}\frac{a_2^1}{1!}+\frac{a_1^1}{1!}\frac{a_3^1}{1!}+\frac{a_2^2}{2!}+\frac{a_4^1}{1!}\,.
+\end{equation}
+
 
 \subsubsection{Generic functions}
 \label{sec:generic_fun}
@@ -497,7 +617,7 @@ Expanding a generic function
     \epsilon^i\right)=\sum_{i=0}^{\infty}b_i
     \epsilon^i
 \end{equation}
-is only sensible if there are no poles in the argument.
+only makes sense if there are no poles in the argument.
 The $b_i$ are given by
 \begin{align}
   \label{eq:generic_rec}
@@ -521,26 +641,9 @@ early in the development stage.
 \subsubsection{Explicit representations}
 
 Instead of the recursive representations discussed in
-Section~\ref{sec:impl} also explicit representations could be used.
+section~\ref{sec:impl} also explicit representations could be used.
 
-The explicit representations make heavy use of partitions.
-${\cal P}(n)$ is the set of partitions of $n$ i.e. for any
-Partition $P \in {\cal P}(n)$ the sum over all elements of $P$ is
-$n$. $|P|$ is the cardinality of $P$.
-${\cal M}_P(l)$ is the multiplicity of $l$ in a partition $P$. A simple
-example:
-\begin{align*}
-  {\cal P}(4)=&\{(1,1,1,1),\,(1,1,2),\,(1,3),\,(2,2),\,(4)\}\\
-  |(1,1,2)|=&3\\
-  {\cal M}_{(1,1,2)}(1)=&2\\
-  {\cal M}_{(1,1,2)}(2)=&1\\
-\end{align*}
-This means e.g.
-\begin{equation}
-  \label{eq:exp_ex}
-\sum_{P \in {\cal P}(4)} \left(\prod_{l \in P} \frac{c^{{\cal M}_P(l)}_l}{{\cal M}_P(l)!} \right)=
-  \frac{c_1^4}{4!}+\frac{c_1^2}{2!}\frac{c_2^1}{1!}+\frac{c_1^1}{1!}\frac{c_3^1}{1!}+\frac{c_2^2}{2!}+\frac{c_4^1}{1!}\,.
-\end{equation}
+The explicit representations make heavy use of partitions (see section~\ref{sec:impl_gamma}).
 Here is a table with the explicit representations for each operation:
 
 
