@@ -1,7 +1,7 @@
 * test the functionality of the series package
 #-
 #define CUT "5"
-#define TESTS "6"
+#define TESTS "12"
 #define FAIL "0"
 
 off stats;
@@ -72,7 +72,7 @@ L [0]=foo-bar2;
    #message passed
 #endif
 
-#call init({`CUT'+2})
+#call init({2*{`CUT'+2}})
 
 #message Test4: inverse function
 .sort
@@ -146,6 +146,86 @@ drop [0x],[0ep];
    #else
    #message passed
 #endif
+
+#message Test8: products of denominators
+.sort
+cf den;
+skip foo;
+L [0]=den(foo)*den(foo)-den(foo*foo);
+#call expand(den)
+.sort
+drop [0];
+#if termsin([0])>0
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else 
+   #message passed
+#endif
+
+#message Test9: products of exponentials
+.sort
+cf exp;
+skip foo;
+L [0]= exp(foo)*exp(-foo) - 1;
+#call expand(exp)
+.sort
+drop [0];
+#if termsin([0])>0
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else 
+   #message passed
+#endif
+
+#message Test10: products of logarithms
+.sort
+cf log;
+skip foo;
+L [0]= log(1+c*x)*log(1+d0*x) - c*d0*x^2;
+#call expand(log,x,2)
+#call expand(log,x,2)
+id log(1) = 0;
+.sort
+drop [0];
+#if termsin([0])>0
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else 
+   #message passed
+#endif
+
+#message Test11: products of powers
+.sort
+cf pow;
+skip foo;
+L [0]= 1 - pow(foo,foo)*pow(foo,-foo);
+#call expand(pow)
+.sort
+drop [0];
+#if termsin([0])>0
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else 
+   #message passed
+#endif
+
+#message Test12: products of Gamma functions
+.sort
+cf Gamma;
+skip foo;
+L [0]= 1 - Gamma(1+c*x)*Gamma(1-c*x);
+#call expand(Gamma,x,1)
+#call expand(Gamma,x,1)
+id Gamma(1) = 1;
+.sort
+drop [0];
+#if termsin([0])>0
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else 
+   #message passed
+#endif
+
 
 #if `FAIL'==0
    #message All tests passed
