@@ -47,10 +47,8 @@
       label afterloop`$labelnum';
 
       $sum=sum_([:i],1,$lim,[:b]([:i]));
-      multiply (
-         + [:log](($minterm) * ($var)^($minpow))
-         + ($sum)
-      );
+      $sum = $sum + [:log](($minterm) * ($var)^($minpow));
+      multiply $sum;
    endwhile;
 
 *  restore original notion of logs
