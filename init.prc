@@ -23,6 +23,7 @@
       #$x=0;
       #$t=0;
       #$sum=0;
+      #$origcut=0;
       #$varstore=0;
       #$cutstore=0;
 
