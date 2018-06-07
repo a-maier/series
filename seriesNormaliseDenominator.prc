@@ -16,6 +16,7 @@
 
 *     determine leading term
       inside $x;
+         multiply replace_(`DENO', [:inv]);
 	 $c = count_($var,1);
 	 if($c<$minpow);
 	    $minpow=count_($var,1);

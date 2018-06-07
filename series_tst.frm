@@ -1,7 +1,7 @@
 * test the functionality of the series package
 #-
 #define CUT "5"
-#define TESTS "14"
+#define TESTS "15"
 #define FAIL "0"
 
 off stats;
@@ -252,6 +252,24 @@ L [0] = (
    + den( - a + A)*den(a + A)^2*c*x^2
 );
 #call expand(den,x,2)
+.sort
+drop [0];
+#if termsin([0])>0
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
+#endif
+
+#message Test15: nontrivial normalisation
+.sort
+skip foo;
+L [0] = (
+   + den(1 + c*x^2*den(A - a))* den(1 + c*x^2*den(A + a))
+   - 1 + c*x^2*(den(A - a) + den(A + a))
+);
+#call expand(den,x,2)
+print+s;
 .sort
 drop [0];
 #if termsin([0])>0
