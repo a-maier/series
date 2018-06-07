@@ -31,7 +31,7 @@
       if($t==1);
 	 $invminterm = 1/$minterm;
 	 else;
-	 $invminterm = [:den]($minterm);
+	 $invminterm = [:inv]($minterm);
       endif;
 
 *     normalise denominator
@@ -43,8 +43,6 @@
 	 else;
 	 $x = [:den]($x);
       endif;
-
-      $invminterm = $invminterm*replace_([:den],[:inv]);
 
       multiply $invminterm*$var^-$minpow*$x;
    endwhile;
