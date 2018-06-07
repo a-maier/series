@@ -1,7 +1,7 @@
 * test the functionality of the series package
 #-
 #define CUT "5"
-#define TESTS "12"
+#define TESTS "13"
 #define FAIL "0"
 
 off stats;
@@ -134,6 +134,7 @@ drop [0];
 .sort
 s x;
 cf den;
+skip foo;
 l [0x] = 1-(1-x)*den(1-x);
 l [0ep] = 1-(1-ep)*den(1-ep);
 #call expand(den,x,{`CUT'-1})
@@ -158,7 +159,7 @@ drop [0];
 #if termsin([0])>0
    #message FAILED
    #redefine FAIL "{`FAIL'+1}"
-   #else 
+   #else
    #message passed
 #endif
 
@@ -173,7 +174,7 @@ drop [0];
 #if termsin([0])>0
    #message FAILED
    #redefine FAIL "{`FAIL'+1}"
-   #else 
+   #else
    #message passed
 #endif
 
@@ -190,7 +191,7 @@ drop [0];
 #if termsin([0])>0
    #message FAILED
    #redefine FAIL "{`FAIL'+1}"
-   #else 
+   #else
    #message passed
 #endif
 
@@ -205,7 +206,7 @@ drop [0];
 #if termsin([0])>0
    #message FAILED
    #redefine FAIL "{`FAIL'+1}"
-   #else 
+   #else
    #message passed
 #endif
 
@@ -222,10 +223,23 @@ drop [0];
 #if termsin([0])>0
    #message FAILED
    #redefine FAIL "{`FAIL'+1}"
-   #else 
+   #else
    #message passed
 #endif
 
+#message Test13: multiple denominators with poles
+.sort
+skip foo;
+L [0]= x*den(x)^2 - 1/x;
+#call expand(den,x,-1)
+.sort
+drop [0];
+#if termsin([0])>0
+   #message FAILED
+   #redefine FAIL "{`FAIL'+1}"
+   #else
+   #message passed
+#endif
 
 #if `FAIL'==0
    #message All tests passed

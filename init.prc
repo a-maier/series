@@ -4,7 +4,7 @@
       #$maxtermnum=`CUT';
       #$labelnum=0;
       S [:x],[:y],[:i];
-      cf [:log],[:den],[:Gamma],[:LOG],[:EXP];
+      cf [:log],[:den],[:inv],[:Gamma],[:LOG],[:EXP];
       cf exp,log,D,psi,[:f];
 
       table [:b](0:`CUT');

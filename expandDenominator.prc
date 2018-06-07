@@ -9,36 +9,10 @@
 *  increase label number to make sure it's unique
    #$labelnum=`$labelnum'+1;
 
+   #call seriesNormaliseDenominator(`DENO')
+
    while(match(`DENO'([:x]?)));
-      $minpow=maxpowerof_([:x]);
-      $minterm=0;
-
       once `DENO'([:x]?$x)=1;
-
-*     determine leading term
-      inside $x;
-	 $c = count_($var,1);
-	 if($c<$minpow);
-	    $minpow=count_($var,1);
-	    $minterm=term_();
-	    elseif($c==$minpow);
-	    $minterm=$minterm+term_();
-	 endif;
-      endinside;
-
-      $minterm = ($minterm)*($var)^(-($minpow));
-
-      $t = termsin_($minterm);
-      if($t==1);
-	 $invminterm = 1/$minterm;
-	 else;
-	 $invminterm = [:den]($minterm);
-      endif;
-
-*     normalise denominator
-      $x =  1 + ($invminterm)*(($x)*($var)^(-($minpow)) - $minterm);
-
-      multiply $invminterm*$var^-$minpow;
 
       #call getCoefficients(x,$var,`$maxtermnum',a)
 
@@ -61,7 +35,7 @@
    endwhile;
 
 *  restore original notion of denominators
-   multiply replace_([:den],`DENO');
+   multiply replace_([:den],`DENO',[:inv],`DENO');
 
    #ifdef `?SERIESSPEC'
       #call restoreSeries
