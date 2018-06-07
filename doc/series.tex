@@ -1,10 +1,16 @@
-\documentclass{article}
+\documentclass[titlepage]{article}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{hyperref}
+\usepackage{microtype}
+
 
 \begin{document}
-\title{The series package}
+\title{The \texttt{series} package}
+\author{Andreas Maier\\andreas.maier@durham.ac.uk}
+\maketitle
+
+\tableofcontents
 
 \section{Intro}
 
@@ -132,7 +138,7 @@ procedure to set an expansion variable and a cut-off and then call
 \end{verbatim}
 This is mainly useful when one wants to expand several different functions; it
 ensures that everything is expanded consistently in the same variable to
-the same power. 
+the same power.
 
 Alternatively it is possible to give all information
 directly to {\tt expand}:
@@ -265,7 +271,7 @@ L [1]=ep;
 #call Gamma([1],[Gamma(1+ep)])
 print [Gamma(1+ep)];
 .end
-\end{verbatim} 
+\end{verbatim}
 
 
 \subsubsection{wrap}
@@ -456,12 +462,117 @@ clashes can be avoided.
 \item {\tt localSeries} resets the expansion variable and order, storing
   the old specification
 \item {\tt restoreSeries} restores the expansion variable and order.
+\item \texttt{seriesNormaliseDenominator} normalises denominators.
 \item {\tt nextPartition} creates the next partition for a given integer.
 \item {\tt nextLongerPartition} creates the next partition containing
   more elements than the current one.
 \item {\tt computeMultiplicities} computes the multiplicities of the
   elements in a partition.
 \end{itemize}
+
+\section{Notes on usage}
+\label{sec:usage_notes}
+
+\subsection{Laurent series}
+\label{sec:laurent}
+
+There are a number of cases where poles in the series expansion are not
+treated properly, i.e. where the series expansion is truncated too
+early. Here is one example:
+\begin{verbatim}
+l foo = power(x-x^2, -1);
+#call expandPower(power, x, 5)
+* bad: exp(-log(x)) * (1+x+...+x^5) misses x^5 term
+\end{verbatim}
+Factoring out the pole explicitly fixes the problem:
+\begin{verbatim}
+l foo = 1/x*power(1-x, -1);
+#call expandPower(power, x, 5)
+* better: exp(-log(1)) * (1/x+1+x+...+x^5)
+\end{verbatim}
+Alternatively, it is of course always possible to use the ``brute
+force'' approach and formally expand to some higher order than what is
+needed in the end.
+
+Expanding single denominators or products of denominators also works as
+expected:
+\begin{verbatim}
+l foo = den(x-x^2);
+l bar = den(x)*den(1-x);
+#call expandDenominator(den, x, 5)
+* good: (1/x+1+x+...+x^5)
+\end{verbatim}
+
+\subsection{Performance considerations}
+\label{sec:perf}
+
+FORM is designed to operate on large expressions and series expansion
+can become a major bottleneck. In fact, the naive approach is usually
+far from optimal:
+\begin{verbatim}
+l foo =
+#include- large_expression
+;
+*bad: this is slow
+#call expand(`F',ep,`CUT')
+\end{verbatim}
+Often, the function `F' will appear in many different terms with the
+same arguments so the same work will be done over and over again. It is
+then much faster to isolate the expansion variable and the function to
+be expanded:
+\begin{verbatim}
+l foo =
+#include- large_expression
+;
+*better: only expand each combination ep^x*`F'(?a) once
+bracket `F',ep;
+.sort
+keep brackets;
+#call expand(`F',ep,`CUT')
+\end{verbatim}
+Sometimes it may be even faster to only isolate and expand `F'
+itself. In such cases, care should be taken that the expansion is
+performed to a sufficiently high order and higher powers of the
+expansion variable have to be discarded by hand.
+\begin{verbatim}
+l foo =
+#include- large_expression
+;
+*only expand each `F'(?a) once
+bracket `F';
+.sort
+keep brackets;
+#call expand(`F',ep,{`CUT'+`HighestPoleInCoefficient'})
+.sort
+if(count(ep,1) > `CUT') discard;
+\end{verbatim}
+If products of the function to be expanded appear, it is often
+beneficial to combine them into a single function:
+\begin{verbatim}
+l foo =
+#include- large_expression
+;
+* combine denominators:
+repeat id den(x?)*den(y?) = den(x*y);
+bracket den,ep;
+.sort
+keep brackets;
+#call expand(den,ep,`CUT')
+\end{verbatim}
+Finally, if TFORM is used, terms can be expanded in parallel:
+\begin{verbatim}
+l foo =
+#include- large_expression
+;
+*better: only expand each combination ep^x*`F'(?a) once
+bracket `F',ep;
+.sort
+keep brackets;
+#call expand(`F',ep,`CUT')
+* ...maybe more code here ...
+#call parallel
+.sort
+\end{verbatim}
 
 \section{Namespaces}
 \label{sec:namesp}
