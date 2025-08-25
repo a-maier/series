@@ -1,9 +1,8 @@
-*defines the active expressions to be series in `VAR' up to power `CUT'
-* the only thing this procedure does is define variables
-* for the "real" functions that do all the work
-#procedure series(VAR,CUT)
+* main procedure
+* the first argument specifies the action (e.g. init or expand)
+* all remaining arguments are forwarded to that action
+#procedure @series(ACTION, ?ARGS)
 
-   #$var=`VAR';
-   #$cut=`CUT';
+   #call `ACTION'(`?ARGS')
 
 #endprocedure

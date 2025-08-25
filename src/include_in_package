@@ -19,6 +19,7 @@ expandFunction.prc
 getCoefficients.prc
 seriesNormaliseDenominator.prc
 setFunctionNames.prc
+setExpansion.prc
 parallel.prc
 partition.frm
 local_series.frm
