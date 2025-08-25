@@ -1,8 +1,8 @@
-#procedure simplepower(BASE,EXP,TARGET)
 *computes BASE^EXP, treating both as series (as specified by the procedure series)
 * the result is saved in `TARGET'
 * for more complicated exponents, use seriespower
 * inverting a series is probably faster with seriesinvert
+#procedure simplepower(BASE,EXP,TARGET)
 
 	#ifndef `$var'
 		#message no series found

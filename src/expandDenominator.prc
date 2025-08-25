@@ -1,6 +1,6 @@
-#procedure expandDenominator(DENO,?SERIESSPEC)
 *replaces the argument of `DENO' by its inverse
 *(the argument is considered as a series in $var up to power $cut)
+#procedure expandDenominator(DENO,?SERIESSPEC)
 
    #ifdef `?SERIESSPEC'
       #call localSeries(`?SERIESSPEC')

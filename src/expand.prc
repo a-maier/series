@@ -1,5 +1,5 @@
-#procedure expand(FUN,?a)
 *wrapper which calls the corresponding expansion procedure
+#procedure expand(FUN,?a)
 
    #if "`FUN'"=="exp"
       #call expandExp(`FUN',`?a')

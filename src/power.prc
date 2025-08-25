@@ -1,6 +1,6 @@
-#procedure power(BASE,EXP,TARGET)
 *computes BASE^EXP, treating both as series (as specified by the procedure series)
 * the result is saved in `TARGET'
+#procedure power(BASE,EXP,TARGET)
 
 *uses TARGET=exp(EXP*log(BASE))
 
@@ -16,5 +16,3 @@
    .sort
 
 #endprocedure
-
-

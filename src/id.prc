@@ -1,5 +1,5 @@
-#procedure id(LHS,RHS)
 *replace LHS by the expression RHS in all active expressions (aside from RHS)
+#procedure id(LHS,RHS)
 
    #call toseries(`RHS',ta)
    skip;

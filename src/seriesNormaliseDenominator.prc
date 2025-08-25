@@ -1,8 +1,8 @@
-#procedure seriesNormaliseDenominator(DENO,?SERIESSPEC)
 * normalises the argument of the denominator function `DENO':
 * `DENO'(norm*x) -> [:inv](norm)*`DENO'(x) with x = 1 + O($var),
 * where $var is the expansion variable
 * [:inv](norm) is simplified to 1/norm if norm is a single term
+#procedure seriesNormaliseDenominator(DENO,?SERIESSPEC)
 
    #ifdef `?SERIESSPEC'
       #call localSeries(`?SERIESSPEC')

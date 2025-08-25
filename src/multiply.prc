@@ -1,5 +1,5 @@
-#procedure multiply(SOURCE1,SOURCE2,TARGET)
 *multiplys the expressions SOURCE1 and SOURCE2 and saves the result in TARGET
+#procedure multiply(SOURCE1,SOURCE2,TARGET)
 
    #call toseries(`SOURCE1',ta)
    #call toseries(`SOURCE2',tb)

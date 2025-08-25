@@ -1,5 +1,5 @@
-#procedure expandGamma(GAMMA,?SERIESSPEC)
 * expand Gamma functions in $var up to power $cut
+#procedure expandGamma(GAMMA,?SERIESSPEC)
 
    #ifdef `?SERIESSPEC'
       #call localSeries(`?SERIESSPEC')

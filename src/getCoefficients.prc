@@ -1,7 +1,7 @@
-#procedure getCoefficients(X,VAR,CUT,C)
 *   extract the coefficients of `VAR' to some power in $`X'
 *   the powers can range from 0 to `CUT'
 *   the resulting coefficients are saved to $`C'0,...,$`C'`CUT'
+#procedure getCoefficients(X,VAR,CUT,C)
 
    #do i=0,`CUT'
       $`C'`i' = 0;
@@ -24,5 +24,5 @@
 	 setexitflag;
       endif;
    endinside;
-   
+
 #endprocedure

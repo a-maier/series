@@ -1,7 +1,7 @@
-#procedure wrap(SOURCE,FUN,TARGET)
 *computes FUN(SOURCE), treating SOURCE as a series
 * as specified by the procedure series
 * the result is saved in TARGET
+#procedure wrap(SOURCE,FUN,TARGET)
 
    #call toseries(`SOURCE',ta)
    #if `$minpowerta'<0

@@ -1,5 +1,5 @@
-#procedure expandPower(POW,?SERIESSPEC)
 *replaces `POW'(x,y) by x^y, treating both x and y as series (as specified by the procedure series)
+#procedure expandPower(POW,?SERIESSPEC)
 
 *uses `POW'(x,y)=exp(y*log(x))
 
@@ -27,4 +27,3 @@
    #endif
 
 #endprocedure
-

@@ -1,7 +1,7 @@
-#procedure log(SOURCE,TARGET)
 *computes the logarithm of SOURCE,
 * treating SOURCE as a series as specified by the procedure series
 * the result is saved in TARGET
+#procedure log(SOURCE,TARGET)
 
    #call toseries(`SOURCE',ta)
    #define CUT "`$cut'"

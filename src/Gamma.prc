@@ -1,7 +1,7 @@
-#procedure Gamma(SOURCE,TARGET)
 *computes the Gamma function with argument SOURCE,
 * treating SOURCE as a series as specified by the procedure series
 * the result is saved in TARGET
+#procedure Gamma(SOURCE,TARGET)
 
    #call toseries(`SOURCE',ta)
    #define CUT "`$cut'"
@@ -24,7 +24,7 @@
 	    skip;
 	    l [:tmp] = + psi(0,[:ta](0))*[:ta](`power');
 	    .sort
-	    
+
 	    #else
 	    skip;
 	    l [:tmp] = [:tmp] + psi({`$PARTSIZE'-1},[:ta](0))

@@ -1,5 +1,5 @@
-#procedure createtable(tab,SIZE)
 *creates a new table [:`tab'] with size *at least* `SIZE'
+#procedure createtable(tab,SIZE)
 
    #ifndef `$size`tab''
 *  table is unused, create it

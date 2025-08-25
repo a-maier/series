@@ -1,7 +1,7 @@
-#procedure exp(SOURCE,TARGET)
 *computes e^SOURCE,
 *  treating SOURCE as a series as specified by the procedure series
 * the result is saved in TARGET
+#procedure exp(SOURCE,TARGET)
 
    #call toseries(`SOURCE',ta)
    #define CUT "{`$cut'}"

@@ -1,6 +1,6 @@
-#procedure invert(SOURCE,TARGET)
 *inverts `SOURCE' (interpreting it as a series in `$var', up to `$var'^`$cut')
 * the result is saved in `TARGET'
+#procedure invert(SOURCE,TARGET)
 
    #call toseries(`SOURCE',ta)
    #define CUT "{`$cut'+{`$minpowerta'}}"
@@ -34,4 +34,3 @@
    cleartable [:tb];
 
 #endprocedure
-

@@ -1,9 +1,9 @@
-#procedure nextPartition(N,PART)
 *   compute the next integer partition for N
 *   the current partition is given by ($`PART'1,...,$`PART`$`PART'SIZE'')
 *   initially $`PART'SIZE should be set to 0
 *   the new partition will again be saved to
 *   ($`PART'1,...,$`PART`$`PART'SIZE'')
+#procedure nextPartition(N,PART)
 
    #if `$`PART'SIZE' == 0
 *     first partition
@@ -70,4 +70,3 @@
    #enddo
 
 #endprocedure
-

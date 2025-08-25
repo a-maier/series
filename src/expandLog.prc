@@ -1,6 +1,6 @@
-#procedure expandLog(LOG,?SERIESSPEC)
 *replaces the argument of `LOG' by its inverse
 *(the argument is considered as a series in $var up to power $cut)
+#procedure expandLog(LOG,?SERIESSPEC)
 
    #ifdef `?SERIESSPEC'
       #call localSeries(`?SERIESSPEC')

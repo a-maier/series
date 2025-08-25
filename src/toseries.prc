@@ -1,5 +1,5 @@
-#procedure toseries(source,tab)
 *transforms `source' into a series (read the coefficients into the table `tab')
+#procedure toseries(source,tab)
 
    #ifndef `$var'
       #message no series found

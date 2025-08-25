@@ -1,6 +1,6 @@
-#procedure expandFunction(FUN,?SERIESSPEC)
 *expands function FUN
 *(the argument is considered as a series in $var up to power $cut)
+#procedure expandFunction(FUN,?SERIESSPEC)
 
    #ifdef `?SERIESSPEC'
       #call localSeries(`?SERIESSPEC')

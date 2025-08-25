@@ -1,5 +1,5 @@
-#procedure localSeries(VAR,CUT)
 * set $var and $cut to local values
+#procedure localSeries(VAR,CUT)
 
    #ifdef `$var'
       $varstore = $var;
@@ -13,8 +13,8 @@
 
 #endprocedure
 
-#procedure restoreSeries()
 * restore global values of $var and $cut
+#procedure restoreSeries()
 
    $var = $varstore;
    $cut = $cutstore;

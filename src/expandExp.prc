@@ -1,6 +1,6 @@
-#procedure expandExp(EXP,?SERIESSPEC)
 *replaces the argument arg of `EXP' by exp(arg)
 *(the argument is considered as a series in $var up to power $cut)
+#procedure expandExp(EXP,?SERIESSPEC)
 
    #ifdef `?SERIESSPEC'
       #call localSeries(`?SERIESSPEC')
