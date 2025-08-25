@@ -2,12 +2,53 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{hyperref}
+\usepackage{listings}
 \usepackage{microtype}
+\usepackage{xcolor}
 
+\lstdefinelanguage{FORM}{%
+  morekeywords={cfunction,local,symbol,drop,print,bracket,brackets,keep},
+  alsoletter={.,\#},
+  otherkeywords={\#call,\#include,.sort,.end},
+  sensitive=false,
+  morecomment=[l]{**},
+  morestring=[b]",
+}
+
+\lstset{ %
+ language=FORM,
+ backgroundcolor=\color{lightgray},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+ basicstyle=\footnotesize\usefont{T1}{DejaVuSansMono-TLF}{m}{n},        % the size of the fonts that are used for the code
+ breakatwhitespace=true,         % sets if automatic breaks should only happen at whitespace
+ breaklines=true,                % sets automatic line breaking
+ captionpos=t,                    % sets the caption-position to bottom
+ commentstyle=\color{red},        % comment style
+ deletekeywords={...},            % if you want to delete keywords from the given language
+ escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+ extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+ frame=false,                     % adds a frame around the code
+ keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+ keywordstyle=\color{blue},       % keyword style
+ otherkeywords={},                 % if you want to add more keywords to the set
+ numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
+ numbersep=5pt,                   % how far the line-numbers are from the code
+ rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+ showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+ showstringspaces=false,          % underline spaces within strings only
+ showtabs=false,                  % show tabs within strings adding particular underscores
+ stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+ stringstyle=\color{gray},         % string literal style
+ tabsize=2,                    % sets default tabsize to 2 spaces
+ title=\lstname,
+ emph={},
+ emphstyle=\color{darkgreen},
+ postbreak=\mbox{$\hookrightarrow$\space},
+ prebreak=\mbox{$\hookrightarrow$},
+}
 
 \begin{document}
 \title{The \texttt{series} package}
-\author{Andreas Maier\\andreas.maier@durham.ac.uk}
+\author{Andreas Maier\\amaier@ifae.es}
 \maketitle
 
 \tableofcontents
@@ -33,155 +74,334 @@ is recommended to use the somewhat faster built-in FORM commands.
 \subsection{Quick start}
 \label{sec:quick}
 
-This section is mainly for impatient people who do not like reading
-manuals. The rest may want to continue with section \ref{sec:usage}.
+\begin{lstlisting}
+** include series package
+#include- series.h # 2.0.0
 
-\begin{verbatim}
-*include series package
-#include- series.h
+** optionally change the names for some functions to avoid name clashes
+** here we show the default names
+** DO NOT ADD ANY SPACE AFTER THE COMMAS
+** #call series(setFunctionNames,denominator = den,derivative = D)
+** #call series(setFunctionNames,exponential = exp,gamma = Gamma)
+** #call series(setFunctionNames,logarithm = log,polygamma = psi)
+** #call series(setFunctionNames,power = pow)
 
-S ep;
-CF f;
-L foo=1-ep;
+** initialisation
+#call series(init,50)
+symbol ep;
 
-*define a series variable and cut
-#call series(ep,3)
+** expand denominators up to (including) ep^3
+local denominators = den(1-ep) + den(1+ep);
 
-*invert foo & save result in the new expression bar
-#call invert(foo,bar)
-* now we have bar=foo^-1+O(ep^4)
+** for general efficiency, otherwise not really necessary here
+bracket den,ep;
+.sort
+keep brackets;
 
-*expand f(foo) & save result in the expression bar
-#call wrap(foo,f,bar)
+#call series(expand,den,ep,3)
+print+s;
+.sort
+drop;
 
-drop foo,bar;
+** expand exponential function
+local exponentials = exp(1-ep) + exp(1+ep);
+#call series(expand,exp,ep,3)
+print+s;
+.sort
+cfunction f;
+drop;
 
-* analogous procedures: exp, log, Gamma, power
-* the procedure power(foo,bar,foobar) would compute foobar=foo^bar
+** analogous: log, Gamma, pow
 
-
-*initialise operations on functions
-#call init(3)
-
-L foo=exp(1-ep)+exp(1+ep);
-
-*expand exponential function
-#call expand(exp)
-
-*alternative syntax
-*#call expand(exp,ep,3)
-
-*analogous: log, pow, den, Gamma
-* den(x?)=x^-1
-
+** expand f(1 + ep + O(ep^3)) in terms of formal derivatives
+local fexpanded = f(1-ep) + f(1+ep);
+#call series(expand,f,ep,3)
+print+s;
 .end
-\end{verbatim}
+\end{lstlisting}
 
 \subsection{Usage}
 \label{sec:usage}
 
 To make the series procedures available, include the header file in your
-FORM program:
-\begin{verbatim}
-#include- series.h
-\end{verbatim}
+FORM program and specify the version you want:
+\begin{lstlisting}
+#include- series.h # 2.0.0
+\end{lstlisting}
 Make sure that {\tt series.h} resides at some location where FORM will find
 it, preferably in one of the directories defined by the environment
-variable \mbox{FORMPATH} (see Chapter 1 of the FORM reference manual). The
-package tries hard not to interfere with the rest of your program, but
-there are some caveats:
-\begin{itemize}
-\item {\tt exp}, {\tt log}, {\tt psi}, {\tt Gamma} and {\tt D} are
-  sometimes defined as commuting functions inside some of the
-  procedures. Do not misuse these names.
-\item Some procedure names are reserved. See sections \ref{sec:proc} and
-  \ref{sec:proc_internal} for a list.
-\item Refrain from  using any symbols, expressions, etc. of the form
-  {\tt[series::{\it name}]}. They are reserved. Dollar variables {\tt
-    \$series{\it name}} are also a bad idea.
-\end{itemize}
+variable \mbox{FORMPATH} (see Chapter 1 of the FORM reference
+manual).
 
-There are two modes of usage: it is possible to either expand {\em expressions}
-(defined with the FORM instructions {\tt local} or {\tt global}) or {\em
-  functions}. These modes are very different in nature, both in their
-usage and in their internal implementations.
+The package tries hard not to interfere with the rest of your
+program. The only public procedure is \lstinline!series!. By default, \lstinline!den,D,exp,Gamma,log,psi,pow! are defined as commuting functions. If you this leads to conflicts or you prefer other names you can call
 
-For the former mode, operating on expressions you will first want to
-call the procedure {\tt series}, e.g.
-\begin{verbatim}
-#call series(ep,7)
-\end{verbatim}
-This tells the package to treat all expressions as series in {\tt ep} up
-to power 7. After that, you can use one of the procedures {\tt log, exp,
-  power, invert, Gamma} or {\tt wrap} to compute series expansions. For a
-description of these procedures and examples see Chapter \ref{sec:proc}.
+\begin{lstlisting}
+#call series(setFunctionNames,denominator = den,derivative = D)
+#call series(setFunctionNames,exponential = exp,gamma = Gamma)
+#call series(setFunctionNames,logarithm = log,polygamma = psi)
+#call series(setFunctionNames,power = pow)
+\end{lstlisting}
+with different names after the equal signs. It is important to not add
+any space after the commas.
 
-\medskip
+Next, set up the package with
+\begin{lstlisting}
+#call series(init,50)
+\end{lstlisting}
+The second argument is the highest number of terms in a series that
+will be computed. If it is set too low, some strange functions can
+appear in your expressions.
 
-In order to use the second mode, operating on functions, you have to
-call the procedure {\tt init} first:
-\begin{verbatim}
-#call init(9)
-\end{verbatim}
-Its argument is the highest number of terms in a series that will be
-computed. If it is set too low, some strange functions can appear in
-your expressions.
+There are two modes of usage: it is possible to either expand
+\emph{functions} or \emph{expressions} (defined with the FORM
+instructions \texttt{local} or \texttt{global}). These modes are very
+different in nature, both in their usage and in their internal
+implementations.
 
-After the initialisation there are two alternative ways to expand
-functions in power series. The first way is to call the {\tt series}
-procedure to set an expansion variable and a cut-off and then call
-{\tt expand} to do the actual expansion:
-\begin{verbatim}
-#call series(ep,7)
-#call expand(f)
-#call expand(g)
-\end{verbatim}
+In order to use the first mode, there are two alternative ways to
+expand functions in power series. The first way is to first set an
+expansion variable and a cut-off and then call
+\lstinline!series(expand,...)! to do the actual expansion:
+\begin{lstlisting}
+#call series(setExpansion,ep,7)
+#call series(expand,f)
+#call series(expand,g)
+\end{lstlisting}
 This is mainly useful when one wants to expand several different functions; it
 ensures that everything is expanded consistently in the same variable to
 the same power.
 
 Alternatively it is possible to give all information
-directly to {\tt expand}:
-\begin{verbatim}
-#call expand(f,ep,7)
-\end{verbatim}
+directly to the expansion:
+\begin{lstlisting}
+#call series(expand,f,ep,7)
+\end{lstlisting}
 In this case any existing series specifications will be restored
 afterwards:
-\begin{verbatim}
-#call series(ep,7)
-* expand f in ep up to ep^7
-#call expand(f)
-* expand g in delta up to delta^3
-#call expand(g,delta,3)
-* expand h in ep up to ep^7
-#call expand(h)
-\end{verbatim}
+\begin{lstlisting}
+#call series(setExpansion,ep,7)
+** expand f in ep up to ep^7
+#call series(expand,f)
+** expand g in delta up to delta^3
+#call series(expand,g,delta,3)
+** expand h in ep up to ep^7
+#call series(expand,h)
+\end{lstlisting}
 
+For functions that are known to \lstinline!expand!, the result will
+be computed explicitly. These are most of the functions that can be
+renamed with \lstinline!setFunctionNames!, with the exception of the
+polygamma and the derivative function.
 
-For functions that are known to {\tt expand}, the result will be
-computed explicitly. This is the case for denominators ({\tt den,
-deno}), logarithms ({\tt log, ln}), powers ({\tt pow, power}), the
-exponential function ({\tt exp}) and the Gamma function ({\tt Gamma}).
-For other functions {\tt f} the result will be given in terms of formal
-{\tt n}th derivatives {\tt D(f(x),n)}.
+For the second mode, operating on expressions you will first want to
+call the \lstinline!series! procedure with \lstinline!setExpansion!, e.g.
+\begin{lstlisting}
+#call series(setExpansion,ep,7)
+\end{lstlisting}
+This tells the package to treat all expressions as series in \texttt{ep} up
+to power 7. After that, you can use one of the procedures \lstinline!log, exp, power, invert, Gamma! or \lstinline!wrap! to compute series expansions. For a
+description of these procedures and examples see Chapter \ref{sec:proc}.
 
 \section{Procedures}
 \label{sec:proc}
 
+The only procedure in the series package is \lstinline!series!. It
+accepts the following subprocedure names as second arguments.
 
-\subsubsection{series}
-\label{sec:series}
+\subsubsection{setFunctionNames}
+\label{sec:setFunctionNames}
 
-Usually, before you use any other procedure from the series package, you have to
-define a global series variable and a cut-off. This is done with the
-procedure {\tt series}. The first parameter is the series variable, the
-second one is the highest power of that variable. For example
-\begin{verbatim}
-#call series(ep,7)
-\end{verbatim}
+Sets the names of several functions that can appear in the output. If
+they are not set by the user, some default function names will be
+defined as commuting functions during initialisation. It is therefore
+recommended to \emph{call this subprocedure before any others} if you
+want to change the defaults.
+
+Each argument after the subprocedure name should have the form
+\lstinline!type=name!, \emph{without any leading spaces}. The
+supported types and the default names are
+
+\begin{lstlisting}
+  denominator = den
+  derivative = D
+  exponential = exp
+  gamma = Gamma
+  logarithm = log
+  polygamma = psi
+  power = pow
+\end{lstlisting}
+
+\subsubsection{init}
+\label{sec:init}
+
+This subprocedure initialises the package. Its argument is the highest possible amount of
+summands in a series. Depending on the appearance of poles this can be
+higher or even lower than your cutting power. (E.g. for a $1/\epsilon$
+pole and a cut of $5$ you shold use \lstinline!\#call series(init,6)!)
+
+\subsubsection{setExpansion}
+\label{sec:setExpansion}
+
+Usually, before you use any other procedure from the series package, you can
+define a global series variable and a cut-off. This is done with \lstinline!setExpansion!. The next parameter is the series variable, the
+last one is the highest power of that variable. For example
+\begin{lstlisting}
+#call series(setExpansion,ep,7)
+\end{lstlisting}
 just tells all following procedures that the expressions are series in {\tt
-  ep} up to power 7. Note that the {\tt series} procedure itself does
+  ep} up to power 7. Note that the procedure itself does
 not change expressions or do anything visible.
+
+\subsection{Procedures operating on functions}
+\label{sec:proc_fun}
+
+\subsubsection{expand}
+\label{sec:expand}
+
+Tries to expand the function that is given as an argument. See
+\ref{sec:setFunctionNames} for the list of known functions. If your
+favourite logarithm function has the name {\tt Log}, try the procedure
+{\tt expandLog} instead or rename the standard logarithm function as
+explained in \ref{sec:setFunctionNames}. If an ``unknown'' function is
+given as an argument, the result will be given in terms of symbolic
+derivatives of this function.
+
+This example will compute the
+inverse of $1+ep$:
+\begin{lstlisting}
+#include- series.h
+#call series(setExpansion,3)
+symbol ep;
+cfunction den;
+local [1] = den(1+ep);
+#call series(setExpansion,ep,3)
+#call series(expand,den)
+** alternative:
+** #call series(expand,den,ep,3)
+print [1];
+.end
+\end{lstlisting}
+
+\subsubsection{expandPower}
+\label{sec:pow_fun}
+
+This procedure expands power functions $\mathtt{fun(x,y)} = x^y$. The
+argument of {\tt expandPower} is the name of the function. This example
+will compute $(1+ep)^{1+ep}$:
+\begin{lstlisting}
+#include- series.h
+#call series(setExpansion,3)
+symbol ep;
+cfunction pow;
+local [1] = pow(1+ep,1+ep);
+#call series(setExpansion,ep,3)
+#call series(expandPower,pow)
+print [1];
+.end
+\end{lstlisting}
+
+\subsubsection{expandLog}
+\label{sec:log_fun}
+
+This procedure expands logarithms. The argument of {\tt expandLog} is the name of the
+logarithm function. This example will compute $\log(1+ep)$:
+\begin{lstlisting}
+#include- series.h
+#call series(setExpansion,3)
+symbol ep;
+cfunction log;
+local [1] = log(1+ep);
+#call series(setExpansion,ep,3)
+#call series(expandLog,log)
+print [1];
+.end
+\end{lstlisting}
+
+\subsubsection{expandExp}
+\label{sec:exp_fun}
+
+This procedure expands the exponential function. The argument of {\tt
+expandExp} is the name of the exponential function. This example will
+compute $e^{1+ep}$:
+\begin{lstlisting}
+#include- series.h
+#call series(setExpansion,3)
+symbol ep;
+cfunction exp;
+local [1] = exp(1+ep);
+#call series(setExpansion,ep,3)
+#call series(expandExp,exp)
+print [1];
+.end
+\end{lstlisting}
+
+\subsubsection{expandDenominator}
+\label{sec:inv_fun}
+
+This procedure expands denominators. The argument of {\tt
+expandDenominator} is the name of the function whose argument is to be
+inverted. This example will compute $1/(1+ep)$:
+\begin{lstlisting}
+#include- series.h
+#call series(setExpansion,3)
+symbol ep;
+cfunction den;
+local [1] = den(1+ep);
+#call series(setExpansion,ep,3)
+#call series(expandDenominator,den)
+print [1];
+.end
+\end{lstlisting}
+
+\subsubsection{expandGamma}
+\label{sec:exp_Gamma}
+
+This procedure expands Gamma functions. The argument of {\tt expandGamma} is
+the name of the Gamma function. The expansion will usually contain polygamma
+functions denoted as {\tt psi}. No special attention is paid to
+poles. It is left to the user to first extract singularities.
+This example will compute $\Gamma(1+ep)$:
+\begin{lstlisting}
+#include- series.h
+#call series(setExpansion,3)
+symbol ep;
+cfunction Gamma;
+local [1] = Gamma(1+ep);
+#call series(setExpansion,ep,3)
+#call series(expandGamma,Gamma)
+print [1];
+.end
+\end{lstlisting}
+
+\subsubsection{expandFunction}
+\label{sec:inv_fun}
+
+This procedure expands a generic function. The argument of {\tt
+expandDenominator} is the name of the function. The expansion will
+contain symbolic derivatives of the function; it is assumed that the
+function and its derivatives are regular.
+This example will expand $f(1+ep)$ in $ep$:
+\begin{lstlisting}
+#include- series.h
+#call series(setExpansion,3)
+symbol ep;
+cfunction den;
+local [1] = f(1+ep);
+#call series(setExpansion,ep,3)
+#call series(expandDenominator,den)
+print [1];
+.end
+\end{lstlisting}
+
+\subsubsection{parallel}
+\label{sec:parallel}
+
+Usually parallel processing is turned of for modules containing
+procedures which expand functions ({\tt expand*}) because of
+dollar variables. If you need
+parallel computing call the {\tt parallel} procedure {\em directly}
+  before the end of the module.
 
 \subsection{Procedures operating on expressions}
 \label{sec:proc_expr}
@@ -194,16 +414,16 @@ This procedure computes an expression (first argument) to some power
 argument). The first two arguments should be expressions and will be
 treated as series. This FORM program will compute $(1+ep)^{1+ep}$ up to
 the power $ep^3$ and print the result:
-\begin{verbatim}
+\begin{lstlisting}
 #include- series.h
-S ep;
-L [1]=1+ep;
-L [2]=[1];
-#call series(ep,3)
-#call power([1],[2],[(1+ep)^(1+ep)])
+symbol ep;
+local [1]=1+ep;
+local [2]=[1];
+#call series(setExpansion,ep,3)
+#call series(power,[1],[2],[(1+ep)^(1+ep)])
 print [(1+ep)^(1+ep)];
 .end
-\end{verbatim}
+\end{lstlisting}
 
 
 \subsubsection{log}
@@ -212,15 +432,15 @@ print [(1+ep)^(1+ep)];
 {\tt log} computes the logarithm of the first argument (an
 expression) and stores it in an expression named like the second
 argument. This program will compute $\log (1+ep)$ up to power $ep^3$:
-\begin{verbatim}
+\begin{lstlisting}
 #include- series.h
-S ep;
-L [1]=1+ep;
-#call series(ep,3)
-#call log([1],[log(1+ep)])
+symbol ep;
+local [1]=1+ep;
+#call series(setExpansion,ep,3)
+#call series(log,[1],[log(1+ep)])
 print [log(1+ep)];
 .end
-\end{verbatim}
+\end{lstlisting}
 
 
 
@@ -229,15 +449,15 @@ print [log(1+ep)];
 
 Like {\tt log} (section~\ref{sec:log}), but computes the
 exponential function. Compute $e^{ep}$ up to order $ep^3$:
-\begin{verbatim}
+\begin{lstlisting}
 #include- series.h
-S ep;
-L [1]=ep;
-#call series(ep,3)
-#call exp([1],[exp(ep)])
+symbol ep;
+local [1]=ep;
+#call series(setExpansion,ep,3)
+#call series(exp,[1],[exp(ep)])
 print [exp(ep)];
 .end
-\end{verbatim}
+\end{lstlisting}
 
 
 \subsubsection{invert}
@@ -245,15 +465,15 @@ print [exp(ep)];
 
 This procedure inverts a series expression (first argument) and stores
 it in the expression given as the second argument. Thus
-\begin{verbatim}
-#call  invert(series,result)
-\end{verbatim}
+\begin{lstlisting}
+#call series( invert,series,result)
+\end{lstlisting}
 is equivalent to
-\begin{verbatim}
-L [-1]=-1;
-#call  power(series,[-1],result)
+\begin{lstlisting}
+local [-1]=-1;
+#call series( power,series,[-1],result)
 drop [-1];
-\end{verbatim}
+\end{lstlisting}
 but more readable and faster.
 
 \subsubsection{Gamma}
@@ -263,15 +483,15 @@ Like {\tt log} (section~\ref{sec:log}), but computes the
 Gamma function. The result can contain polygamma functions denoted as
 {\tt psi}. Note that no special attention is paid to poles.
 Compute $\Gamma(1+ep)$ up to order $ep^3$:
-\begin{verbatim}
+\begin{lstlisting}
 #include- series.h
-S ep;
-L [1]=ep;
-#call series(ep,3)
-#call Gamma([1],[Gamma(1+ep)])
+symbol ep;
+local [1]=ep;
+#call series(setExpansion,ep,3)
+#call series(Gamma,[1],[Gamma(1+ep)])
 print [Gamma(1+ep)];
 .end
-\end{verbatim}
+\end{lstlisting}
 
 
 \subsubsection{wrap}
@@ -281,194 +501,16 @@ This procedure expands a function (second argument) of an expression
 (first argument)
 and stores it in the expression given as the second argument.
 This expands $f(ep)$ up to order $ep^3$:
-\begin{verbatim}
+\begin{lstlisting}
 #include- series.h
-S ep;
-CF f;
-L [1]=ep;
-#call series(ep,3)
-#call wrap([1],f,[f(ep)])
+symbol ep;
+cfunction f;
+local [1]=ep;
+#call series(setExpansion,ep,3)
+#call series(wrap,[1],f,[f(ep)])
 print [f(ep)];
 .end
-\end{verbatim}
-
-\subsection{Procedures operating on functions}
-\label{sec:proc_fun}
-
-\subsubsection{init}
-\label{sec:invert}
-
-This procedure initialises operations on functions. If you want to use
-{\tt expand} or any of the {\tt *function} procedures, you have to call
-this procedure first. Its argument is the highest possible amount of
-summands in a series. Depending on the appearance of poles this can be
-higher or even lower than your cutting power. (E.g. for a $1/\epsilon$
-pole and a cut of $5$ you shold use {\tt \#call init(6)})
-
-\subsubsection{expand}
-\label{sec:expand}
-
-Tries to expand the function that is given as an argument. ``Known''
-functions are {\tt exp, log, ln, pow, power, den, deno} and {\tt Gamma}
-(case sensitive). If your favourite logarithm function has the name {\tt
-Log}, try the procedure {\tt expandLog} instead. If an ``unknown''
-function is given as an argument, the result will be given in terms of
-symbolic derivatives of this function.
-
-This example will compute the
-inverse of $1+ep$:
-\begin{verbatim}
-#include- series.h
-#call init(3)
-S ep;
-CF den;
-L [1]=den(1+ep);
-#call series(ep,3)
-#call expand(den)
-*alternative:
-*#call expand(den,ep,3)
-print [1];
-.end
-\end{verbatim}
-
-\subsubsection{expandPower}
-\label{sec:pow_fun}
-
-This procedure expands power functions $\mathtt{fun(x,y)} = x^y$. The
-argument of {\tt expandPower} is the name of the function. This example
-will compute $(1+ep)^{1+ep}$:
-\begin{verbatim}
-#include- series.h
-#call init(3)
-S ep;
-CF pow;
-L [1]=pow(1+ep,1+ep);
-#call series(ep,3)
-#call expandPower(pow)
-print [1];
-.end
-\end{verbatim}
-
-\subsubsection{expandLog}
-\label{sec:log_fun}
-
-This procedure expands logarithms. The argument of {\tt expandLog} is the name of the
-logarithm function. This example will compute $\log(1+ep)$:
-\begin{verbatim}
-#include- series.h
-#call init(3)
-S ep;
-CF log;
-L [1]=log(1+ep);
-#call series(ep,3)
-#call expandLog(log)
-print [1];
-.end
-\end{verbatim}
-
-\subsubsection{expandExp}
-\label{sec:exp_fun}
-
-This procedure expands the exponential function. The argument of {\tt
-expandExp} is the name of the exponential function. This example will
-compute $e^{1+ep}$:
-\begin{verbatim}
-#include- series.h
-#call init(3)
-S ep;
-CF exp;
-L [1]=exp(1+ep);
-#call series(ep,3)
-#call expandExp(exp)
-print [1];
-.end
-\end{verbatim}
-
-\subsubsection{expandDenominator}
-\label{sec:inv_fun}
-
-This procedure expands denominators. The argument of {\tt
-expandDenominator} is the name of the function whose argument is to be
-inverted. This example will compute $1/(1+ep)$:
-\begin{verbatim}
-#include- series.h
-#call init(3)
-S ep;
-CF den;
-L [1]=den(1+ep);
-#call series(ep,3)
-#call expandDenominator(den)
-print [1];
-.end
-\end{verbatim}
-
-\subsubsection{expandGamma}
-\label{sec:exp_Gamma}
-
-This procedure expands Gamma functions. The argument of {\tt expandGamma} is
-the name of the Gamma function. The expansion will usually contain polygamma
-functions denoted as {\tt psi}. No special attention is paid to
-poles. It is left to the user to first extract singularities.
-This example will compute $\Gamma(1+ep)$:
-\begin{verbatim}
-#include- series.h
-#call init(3)
-S ep;
-CF Gamma;
-L [1]=Gamma(1+ep);
-#call series(ep,3)
-#call expandGamma(Gamma)
-print [1];
-.end
-\end{verbatim}
-
-\subsubsection{expandFunction}
-\label{sec:inv_fun}
-
-This procedure expands a generic function. The argument of {\tt
-expandDenominator} is the name of the function. The expansion will
-contain symbolic derivatives of the function; it is assumed that the
-function and its derivatives are regular.
-This example will expand $f(1+ep)$ in $ep$:
-\begin{verbatim}
-#include- series.h
-#call init(3)
-S ep;
-CF den;
-L [1]=f(1+ep);
-#call series(ep,3)
-#call expandDenominator(den)
-print [1];
-.end
-\end{verbatim}
-
-\subsubsection{parallel}
-\label{sec:parallel}
-
-Usually parallel processing is turned of for modules containing
-procedures which expand functions ({\tt expand*}) because of
-dollar variables. If you need
-parallel computing call the {\tt parallel} procedure {\em directly}
-  before the end of the module.
-
-\subsection{Internal Procedures}
-\label{sec:proc_internal}
-These procedures are for internal use. They are listed here so that name
-clashes can be avoided.
-\begin{itemize}
-\item {\tt createtable} creates a table for storing expressions.
-\item {\tt toseries} puts an expression into a previously defined table.
-\item {\tt getCoefficients} extracts the coefficients from a series.
-\item {\tt localSeries} resets the expansion variable and order, storing
-  the old specification
-\item {\tt restoreSeries} restores the expansion variable and order.
-\item \texttt{seriesNormaliseDenominator} normalises denominators.
-\item {\tt nextPartition} creates the next partition for a given integer.
-\item {\tt nextLongerPartition} creates the next partition containing
-  more elements than the current one.
-\item {\tt computeMultiplicities} computes the multiplicities of the
-  elements in a partition.
-\end{itemize}
+\end{lstlisting}
 
 \section{Notes on usage}
 \label{sec:usage_notes}
@@ -479,29 +521,29 @@ clashes can be avoided.
 There are a number of cases where poles in the series expansion are not
 treated properly, i.e. where the series expansion is truncated too
 early. Here is one example:
-\begin{verbatim}
-l foo = power(x-x^2, -1);
-#call expandPower(power, x, 5)
-* bad: exp(-log(x)) * (1+x+...+x^5) misses x^5 term
-\end{verbatim}
+\begin{lstlisting}
+local foo = power(x-x^2, -1);
+#call series(expandPower,power, x, 5)
+** bad: exp(-log(x)) * (1+x+...+x^5) misses x^5 term
+\end{lstlisting}
 Factoring out the pole explicitly fixes the problem:
-\begin{verbatim}
-l foo = 1/x*power(1-x, -1);
-#call expandPower(power, x, 5)
-* better: exp(-log(1)) * (1/x+1+x+...+x^5)
-\end{verbatim}
+\begin{lstlisting}
+local foo = 1/x*power(1-x, -1);
+#call series(expandPower,power, x, 5)
+** better: exp(-log(1)) * (1/x+1+x+...+x^5)
+\end{lstlisting}
 Alternatively, it is of course always possible to use the ``brute
 force'' approach and formally expand to some higher order than what is
 needed in the end.
 
 Expanding single denominators or products of denominators also works as
 expected:
-\begin{verbatim}
-l foo = den(x-x^2);
-l bar = den(x)*den(1-x);
-#call expandDenominator(den, x, 5)
-* good: (1/x+1+x+...+x^5)
-\end{verbatim}
+\begin{lstlisting}
+local foo = den(x-x^2);
+local bar = den(x)*den(1-x);
+#call series(expandDenominator,den, x, 5)
+** good: (1/x+1+x+...+x^5)
+\end{lstlisting}
 
 \subsection{Performance considerations}
 \label{sec:perf}
@@ -509,101 +551,71 @@ l bar = den(x)*den(1-x);
 FORM is designed to operate on large expressions and series expansion
 can become a major bottleneck. In fact, the naive approach is usually
 far from optimal:
-\begin{verbatim}
-l foo =
+\begin{lstlisting}
+local foo =
 #include- large_expression
 ;
-*bad: this is slow
-#call expand(`F',ep,`CUT')
-\end{verbatim}
+**bad: this is slow
+#call series(expand,`F',ep,`CUT')
+\end{lstlisting}
 Often, the function `F' will appear in many different terms with the
 same arguments so the same work will be done over and over again. It is
 then much faster to isolate the expansion variable and the function to
 be expanded:
-\begin{verbatim}
-l foo =
+\begin{lstlisting}
+local foo =
 #include- large_expression
 ;
-*better: only expand each combination ep^x*`F'(?a) once
+**better: only expand each combination ep^x*`F'(?a) once
 bracket `F',ep;
 .sort
 keep brackets;
-#call expand(`F',ep,`CUT')
-\end{verbatim}
+#call series(expand,`F',ep,`CUT')
+\end{lstlisting}
 Sometimes it may be even faster to only isolate and expand `F'
 itself. In such cases, care should be taken that the expansion is
 performed to a sufficiently high order and higher powers of the
 expansion variable have to be discarded by hand.
-\begin{verbatim}
-l foo =
+\begin{lstlisting}
+local foo =
 #include- large_expression
 ;
-*only expand each `F'(?a) once
+**only expand each `F'(?a) once
 bracket `F';
 .sort
 keep brackets;
-#call expand(`F',ep,{`CUT'+`HighestPoleInCoefficient'})
+#call series(expand,`F',ep,{`CUT'+`HighestPoleInCoefficient'})
 .sort
 if(count(ep,1) > `CUT') discard;
-\end{verbatim}
+\end{lstlisting}
 If products of the function to be expanded appear, it is often
 beneficial to combine them into a single function:
-\begin{verbatim}
-l foo =
+\begin{lstlisting}
+local foo =
 #include- large_expression
 ;
-* combine denominators:
+** combine denominators:
 repeat id den(x?)*den(y?) = den(x*y);
 bracket den,ep;
 .sort
 keep brackets;
-#call expand(den,ep,`CUT')
-\end{verbatim}
+#call series(expand,den,ep,`CUT')
+\end{lstlisting}
 Finally, if TFORM is used, terms can be expanded in parallel:
-\begin{verbatim}
-l foo =
+\begin{lstlisting}
+local foo =
 #include- large_expression
 ;
-*better: only expand each combination ep^x*`F'(?a) once
+**better: only expand each combination ep^x*`F'(?a) once
 bracket `F',ep;
 .sort
 keep brackets;
-#call expand(`F',ep,`CUT')
-* ...maybe more code here ...
-#call parallel
+#call series(expand,`F',ep,`CUT')
+** ...maybe more code here ...
+#call series(parallel)
 .sort
-\end{verbatim}
+\end{lstlisting}
 
-\section{Namespaces}
-\label{sec:namesp}
-
-Unfortunately, FORM has no clean interface for packages: There is no
-such thing as namespaces and scoping is (almost) nonexistant. The {\tt
-  series} package tries to work around this by assigning very complicated
-names for its expressions and symbols, which hopeful no sane person
-would ever use in his or her FORM program.
-
-Still, there is a problem with the names of procedures which might clash
-with user-defined ones (unfortunately FORM doesn't know overloading
-either). To work around this, the {\tt series} package has very basic
-support for namespaces. If the preprocessor variable {\tt NAMESPACE} is
-defined {\em before} the {\tt series} package is included, all
-procedures will have the value of {\tt NAMESPACE} prepended to their name:
-\begin{verbatim}
-*import the series procedures into the namespace "series"
-* DO NOT undefine NAMESPACE
-#define NAMESPACE "series"
-#include- series.h
-
-L foo=1+ep;
-*"series" now becomes "seriesseries"
-#call seriesseries(ep,3)
-
-*"exp" becomes "seriesexp"
-#call seriesexp(foo,bar)
-print bar;
-.end
-\end{verbatim}
 
 \appendix
 
