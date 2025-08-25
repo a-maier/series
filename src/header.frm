@@ -2,7 +2,3 @@
 
 #ifndef `SERIESPACKAGE'
 #define SERIESPACKAGE
-
-#ifndef `NAMESPACE'
-#define NAMESPACE ""
-#endif
