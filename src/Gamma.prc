@@ -7,7 +7,6 @@
    #define CUT "`$cut'"
    #call createtable(tb,`CUT')
    fill [:tb](0) = 1;
-   CF Gamma;
    hide `SOURCE';
 *  coefficients of inverted series
    #do power=1,`CUT'
@@ -22,12 +21,12 @@
 	    #elseif `$PARTSIZE' == 1
 *           trivial partition
 	    skip;
-	    l [:tmp] = + psi(0,[:ta](0))*[:ta](`power');
+	    l [:tmp] = + `$polygamma'(0,[:ta](0))*[:ta](`power');
 	    .sort
 
 	    #else
 	    skip;
-	    l [:tmp] = [:tmp] + psi({`$PARTSIZE'-1},[:ta](0))
+	    l [:tmp] = [:tmp] + `$polygamma'({`$PARTSIZE'-1},[:ta](0))
 	    #do j=1,`$PARTSIZE',1
 	       #redefine l "`$PART`j''"
 	       * [:ta](`l')^`$MULTIPLICITY`l''/{`$MULTIPLICITY`l''!}
@@ -51,7 +50,7 @@
    .sort
    drop [:tmp];
    skip;
-   L `TARGET'= Gamma([:ta](0))*(1
+   L `TARGET'= `$gamma'([:ta](0))*(1
    #do i=1,`CUT'
       +[:tb](`i')*`$var'^(`i')
    #enddo

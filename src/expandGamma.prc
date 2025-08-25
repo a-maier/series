@@ -31,12 +31,12 @@
 
 	       #elseif `$PARTSIZE' == 1
 *              trivial partition
-	       $b`n' = psi(0,$a0)*$a`n';
+	       $b`n' = `$polygamma'(0,$a0)*$a`n';
 
 	       #else
 	       $b`n' =
 	       + $b`n'
-	       + psi({`$PARTSIZE'-1},$a0)
+	       + `$polygamma'({`$PARTSIZE'-1},$a0)
 	       #do j=1,`$PARTSIZE',1
 		  #redefine l "`$PART`j''"
 		  * $a`l'^`$MULTIPLICITY`l''/{`$MULTIPLICITY`l''!}

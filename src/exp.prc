@@ -41,14 +41,13 @@
 	 #message some parts will not be expanded
       #endif
       S [:x];
-      CF exp;
       skip;
       nskip `TARGET';
-      multiply exp( sum_(
+      multiply `$exponential'( sum_(
          [:x],0,-(`$minpowerta'),
          [:ta]([:x])*`$var'^([:x]+(`$minpowerta'))
       ) );
-      argument exp;
+      argument `$exponential';
 	 if(count([:ta],1)>0)discard;
       endargument;
       .sort

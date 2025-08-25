@@ -18,6 +18,7 @@ expandGamma.prc
 expandFunction.prc
 getCoefficients.prc
 seriesNormaliseDenominator.prc
+setFunctionNames.prc
 parallel.prc
 partition.frm
 local_series.frm

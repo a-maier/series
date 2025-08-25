@@ -13,14 +13,14 @@
 
    argument [:EXP];
       #call expandLog([:LOG]);
-      multiply replace_([:LOG],log);
+      multiply replace_([:LOG],`$logarithm');
    endargument;
 
 *  restore original cut
    $cut=$origcut;
    #call expandExp([:EXP]);
 
-   multiply replace_([:EXP],exp);
+   multiply replace_([:EXP],`$exponential');
 
    #ifdef `?SERIESSPEC'
       #call restoreSeries

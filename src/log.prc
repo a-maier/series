@@ -6,7 +6,6 @@
    #call toseries(`SOURCE',ta)
    #define CUT "`$cut'"
    #call createtable(tb,`CUT')
-   CF log;
    skip;
 *  coefficients of inverted series
    #do power=1,`CUT'
@@ -24,14 +23,14 @@
    .sort
    drop [:tmp];
    skip;
-   L `TARGET'= log([:ta](0)*(`$var')^(`$minpowerta'))
+   L `TARGET'= `$logarithm'([:ta](0)*(`$var')^(`$minpowerta'))
    #do i=1,`CUT'
       +[:tb](`i')*`$var'^(`i')
    #enddo
    ;
 *  throw away trivial logs -- this is a bit a waste of resources,
 *  we already know that at most one term will be affected
-   id once log(1)=0;
+   id once `$logarithm'(1)=0;
 
    .sort
    cleartable [:ta];

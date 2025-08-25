@@ -5,7 +5,42 @@
       #$labelnum=0;
       S [:x],[:y],[:i];
       cf [:log],[:den],[:inv],[:Gamma],[:LOG],[:EXP];
-      cf exp,log,D,psi,[:f];
+      cf [:f];
+
+      #ifndef `$derivative'
+         cf D;
+         #$derivative = D;
+      #endif
+
+      #ifndef `$exponential'
+         cf exp;
+         #$exponential = exp;
+      #endif
+
+      #ifndef `$gamma'
+         cf Gamma;
+         #$gamma = Gamma;
+      #endif
+
+      #ifndef `$logarithm'
+         cf log;
+         #$logarithm = log;
+      #endif
+
+      #ifndef `$polygamma'
+         cf psi;
+         #$polygamma = psi;
+      #endif
+
+      #ifndef `$power'
+         cf pow;
+         #$power = pow;
+      #endif
+
+      #ifndef `$denominator'
+         cf den;
+         #$denominator = den;
+      #endif
 
       table [:b](0:`CUT');
       #do n=0,`CUT'

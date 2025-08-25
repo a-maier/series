@@ -16,7 +16,6 @@
 
 *  coefficients of result series
    S [:d],[:x];
-   CF D;
    fill [:tb](0)=`FUN'(`FUNARG');
    skip;
 *  now higher order terms
@@ -42,7 +41,7 @@
       +[:tb](`i')*`$var'^(`i')
    #enddo
    ;
-   id [:d]^[:x]?{>0}*`FUN'(?a) = D(`FUN'(?a),[:x]);
+   id [:d]^[:x]?{>0}*`FUN'(?a) = `$derivative'(`FUN'(?a),[:x]);
    .sort
    cleartable [:tb];
 

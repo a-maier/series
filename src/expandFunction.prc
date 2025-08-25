@@ -18,7 +18,7 @@
 *     multiply by expanded function
 
       $lim = $cut - count_($var,1);
-      $b0=D([:f]($a0),0);
+      $b0=`$derivative'([:f]($a0),0);
       #do n=1,`$maxtermnum'
 	 if(`n'>$lim) goto afterloop`$labelnum';
 	 $b`n' =
@@ -27,7 +27,7 @@
 	 #enddo
 	 ;
 	 inside $b`n';
-	    id D([:x]?,[:y]?)=D([:x],[:y]+1);
+	    id `$derivative'([:x]?,[:y]?)=`$derivative'([:x],[:y]+1);
 	 endinside;
       #enddo
       label afterloop`$labelnum';

@@ -1,17 +1,17 @@
 *wrapper which calls the corresponding expansion procedure
 #procedure expand(FUN,?a)
 
-   #if "`FUN'"=="exp"
+   #if "`FUN'"=="`$exponential'"
       #call expandExp(`FUN',`?a')
-      #elseif ( ("`FUN'"=="log") || ("`FUN'"=="ln") )
+   #elseif "`FUN'"=="`$logarithm'"
       #call expandLog(`FUN',`?a')
-      #elseif ( ("`FUN'"=="pow") || ("`FUN'"=="power") )
+   #elseif "`FUN'"=="`$power'"
       #call expandPower(`FUN',`?a')
-      #elseif ( ("`FUN'"=="den") || ("`FUN'"=="deno") )
+   #elseif "`FUN'"=="`$denominator'"
       #call expandDenominator(`FUN',`?a')
-      #elseif "`FUN'"=="Gamma"
+   #elseif "`FUN'"=="`$gamma'"
       #call expandGamma(`FUN',`?a')
-      #else
+   #else
       #call expandFunction(`FUN',`?a')
    #endif
 
