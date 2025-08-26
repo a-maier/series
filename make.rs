@@ -147,7 +147,7 @@ static PRC: LazyLock<Regex> =
 fn write_prc_1_0_1(mut out: impl Write, txt: &[u8]) -> Result<()> {
     let txt = LOCAL_VAR.replace_all(txt.as_ref(), b"[series::$1]");
     let txt = DOLLAR_VAR.replace_all(txt.as_ref(), b"$1$$series");
-    let txt = PRC.replace_all(txt.as_ref(), b"#$1 `NAMESPACE'");
+    let txt = PRC.replace_all(txt.as_ref(), b"#$1 `NAMESPACE'$2");
     out.write_all(txt.as_ref())?;
     Ok(())
 }
