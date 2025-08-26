@@ -1,43 +1,43 @@
 #procedure init(CUT)
 
-   #ifndef `$labelnum'
+   #if exists($labelnum) == 0
       #$maxtermnum=`CUT';
       #$labelnum=0;
       S [:x],[:y],[:i];
       cf [:log],[:den],[:inv],[:Gamma],[:LOG],[:EXP];
       cf [:f];
 
-      #ifndef `$derivative'
+      #if exists($derivative) == 0
          cf D;
          #$derivative = D;
       #endif
 
-      #ifndef `$exponential'
+      #if exists($exponential) == 0
          cf exp;
          #$exponential = exp;
       #endif
 
-      #ifndef `$gamma'
+      #if exists($gamma) == 0
          cf Gamma;
          #$gamma = Gamma;
       #endif
 
-      #ifndef `$logarithm'
+      #if exists($logarithm) == 0
          cf log;
          #$logarithm = log;
       #endif
 
-      #ifndef `$polygamma'
+      #if exists($polygamma) == 0
          cf psi;
          #$polygamma = psi;
       #endif
 
-      #ifndef `$power'
+      #if exists($power) == 0
          cf pow;
          #$power = pow;
       #endif
 
-      #ifndef `$denominator'
+      #if exists($denominator) == 0
          cf den;
          #$denominator = den;
       #endif
@@ -62,13 +62,11 @@
       #$varstore=0;
       #$cutstore=0;
 
-      #else
-      #ifndef `$IWarnedYou'
-	 #message WARNING: init called more than once
-	 #message init was first called with argument `$maxtermnum'
-	 #message all further calls will be ignored
-	 #$IWarnedYou = 1;
-      #endif
+   #elseif exists($IWarnedYou) == 0
+      #message WARNING: init called more than once
+      #message init was first called with argument `$maxtermnum'
+      #message all further calls will be ignored
+      #$IWarnedYou = 1;
    #endif
 
 #endprocedure

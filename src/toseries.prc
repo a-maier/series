@@ -1,7 +1,7 @@
 *transforms `source' into a series (read the coefficients into the table `tab')
 #procedure toseries(source,tab)
 
-   #ifndef `$var'
+   #if exists($var) == 0
       #message no series found
       #message (please call series(var,cut) first)
       #terminate

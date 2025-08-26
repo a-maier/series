@@ -1,10 +1,10 @@
 *creates a new table [:`tab'] with size *at least* `SIZE'
 #procedure createtable(tab,SIZE)
 
-   #ifndef `$size`tab''
+   #if exists($size`tab') == 0
 *  table is unused, create it
       table,sparse [:`tab'](1);
-      #else
+   #else
       cleartable [:`tab'];
    #endif
    #$size`tab'=`SIZE';

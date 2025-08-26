@@ -1,10 +1,10 @@
 * set $var and $cut to local values
 #procedure localSeries(VAR,CUT)
 
-   #ifdef `$var'
+   #if exists($var)
       $varstore = $var;
       $cutstore = $cut;
-      #else
+   #else
       $varstore = `VAR';
       $cutstore = `CUT';
    #endif

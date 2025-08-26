@@ -4,7 +4,7 @@
 * inverting a series is probably faster with seriesinvert
 #procedure simplepower(BASE,EXP,TARGET)
 
-	#ifndef `$var'
+	#if exists($var) == 0
 		#message no series found
 		#message (please call series(var,cut) first)
 		#terminate
