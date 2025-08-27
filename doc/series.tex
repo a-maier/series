@@ -80,14 +80,16 @@ is recommended to use the somewhat faster built-in FORM commands.
 
 ** optionally change the names for some functions to avoid name clashes
 ** here we show the default names
-** DO NOT ADD ANY SPACE AFTER THE COMMAS
-** #call series(setFunctionNames,denominator = den,derivative = D)
-** #call series(setFunctionNames,exponential = exp,gamma = Gamma)
-** #call series(setFunctionNames,logarithm = log,polygamma = psi)
-** #call series(setFunctionNames,power = pow)
+** #call series(setFunctionNames(denominator = den))
+** #call series(setFunctionNames(derivative = D))
+** #call series(setFunctionNames(exponential = exp))
+** #call series(setFunctionNames(gamma = Gamma))
+** #call series(setFunctionNames(logarithm = log))
+** #call series(setFunctionNames(polygamma = psi))
+** #call series(setFunctionNames(power = pow))
 
 ** initialisation
-#call series(init,50)
+#call series(init(50))
 symbol ep;
 
 ** expand denominators up to (including) ep^3
@@ -98,14 +100,14 @@ bracket den,ep;
 .sort
 keep brackets;
 
-#call series(expand,den,ep,3)
+#call series(expand(den, ep, 3))
 print+s;
 .sort
 drop;
 
 ** expand exponential function
 local exponentials = exp(1-ep) + exp(1+ep);
-#call series(expand,exp,ep,3)
+#call series(expand(exp, ep, 3))
 print+s;
 .sort
 cfunction f;
@@ -115,7 +117,7 @@ drop;
 
 ** expand f(1 + ep + O(ep^3)) in terms of formal derivatives
 local fexpanded = f(1-ep) + f(1+ep);
-#call series(expand,f,ep,3)
+#call series(expand(f, ep, 3))
 print+s;
 .end
 \end{lstlisting}
@@ -134,20 +136,24 @@ variable \mbox{FORMPATH} (see Chapter 1 of the FORM reference
 manual).
 
 The package tries hard not to interfere with the rest of your
-program. The only public procedure is \lstinline!series!. By default, \lstinline!den,D,exp,Gamma,log,psi,pow! are defined as commuting functions. If you this leads to conflicts or you prefer other names you can call
-
+program. The only public procedure is \lstinline!series!. By default,
+\lstinline!den,D,exp,Gamma,log,psi,pow! are defined as commuting
+functions. If you this leads to conflicts or you prefer other names
+you can use
 \begin{lstlisting}
-#call series(setFunctionNames,denominator = den,derivative = D)
-#call series(setFunctionNames,exponential = exp,gamma = Gamma)
-#call series(setFunctionNames,logarithm = log,polygamma = psi)
-#call series(setFunctionNames,power = pow)
+#call series(setFunctionNames(denominator = den))
+#call series(setFunctionNames(derivative = D))
+#call series(setFunctionNames(exponential = exp))
+#call series(setFunctionNames(gamma = Gamma))
+#call series(setFunctionNames(logarithm = log))
+#call series(setFunctionNames(polygamma = psi))
+#call series(setFunctionNames(power = pow))
 \end{lstlisting}
-with different names after the equal signs. It is important to not add
-any space after the commas.
+with different names after the equal signs.
 
 Next, set up the package with
 \begin{lstlisting}
-#call series(init,50)
+#call series(init(50))
 \end{lstlisting}
 The second argument is the highest number of terms in a series that
 will be computed. If it is set too low, some strange functions can
@@ -162,11 +168,11 @@ implementations.
 In order to use the first mode, there are two alternative ways to
 expand functions in power series. The first way is to first set an
 expansion variable and a cut-off and then call
-\lstinline!series(expand,...)! to do the actual expansion:
+\lstinline!series(expand(...))! to do the actual expansion:
 \begin{lstlisting}
-#call series(setExpansion,ep,7)
-#call series(expand,f)
-#call series(expand,g)
+#call series(setExpansion(ep, 7))
+#call series(expand(f))
+#call series(expand(g))
 \end{lstlisting}
 This is mainly useful when one wants to expand several different functions; it
 ensures that everything is expanded consistently in the same variable to
@@ -175,18 +181,18 @@ the same power.
 Alternatively it is possible to give all information
 directly to the expansion:
 \begin{lstlisting}
-#call series(expand,f,ep,7)
+#call series(expand(f, ep, 7))
 \end{lstlisting}
 In this case any existing series specifications will be restored
 afterwards:
 \begin{lstlisting}
-#call series(setExpansion,ep,7)
+#call series(setExpansion(ep,7))
 ** expand f in ep up to ep^7
-#call series(expand,f)
+#call series(expand(f))
 ** expand g in delta up to delta^3
-#call series(expand,g,delta,3)
+#call series(expand(g,delta,3))
 ** expand h in ep up to ep^7
-#call series(expand,h)
+#call series(expand(h))
 \end{lstlisting}
 
 For functions that are known to \lstinline!expand!, the result will
@@ -197,7 +203,7 @@ polygamma and the derivative function.
 For the second mode, operating on expressions you will first want to
 call the \lstinline!series! procedure with \lstinline!setExpansion!, e.g.
 \begin{lstlisting}
-#call series(setExpansion,ep,7)
+#call series(setExpansion(ep, 7))
 \end{lstlisting}
 This tells the package to treat all expressions as series in \texttt{ep} up
 to power 7. After that, you can use one of the procedures \lstinline!log, exp, power, invert, Gamma! or \lstinline!wrap! to compute series expansions. For a
@@ -206,8 +212,12 @@ description of these procedures and examples see Chapter \ref{sec:proc}.
 \section{Procedures}
 \label{sec:proc}
 
-The only procedure in the series package is \lstinline!series!. It
-accepts the following subprocedure names as second arguments.
+To prevent name clashes, the only top-level procedure in the series
+package is \lstinline!series!. As its argument, it accepts the name of
+a subprocedure \lstinline!PROC! and it arguments \lstinline!?ARGS!:
+\begin{lstlisting}
+#call series(PROC(?ARGS))
+\end{lstlisting}
 
 \subsubsection{setFunctionNames}
 \label{sec:setFunctionNames}
@@ -221,7 +231,6 @@ want to change the defaults.
 Each argument after the subprocedure name should have the form
 \lstinline!type=name!, \emph{without any leading spaces}. The
 supported types and the default names are
-
 \begin{lstlisting}
   denominator = den
   derivative = D
@@ -238,7 +247,7 @@ supported types and the default names are
 This subprocedure initialises the package. Its argument is the highest possible amount of
 summands in a series. Depending on the appearance of poles this can be
 higher or even lower than your cutting power. (E.g. for a $1/\epsilon$
-pole and a cut of $5$ you shold use \lstinline!\#call series(init,6)!)
+pole and a cut of $5$ you shold use \lstinline!\#call series(init(6))!)
 
 \subsubsection{setExpansion}
 \label{sec:setExpansion}
@@ -247,7 +256,7 @@ Usually, before you use any other procedure from the series package, you can
 define a global series variable and a cut-off. This is done with \lstinline!setExpansion!. The next parameter is the series variable, the
 last one is the highest power of that variable. For example
 \begin{lstlisting}
-#call series(setExpansion,ep,7)
+#call series(setExpansion(ep, 7))
 \end{lstlisting}
 just tells all following procedures that the expressions are series in {\tt
   ep} up to power 7. Note that the procedure itself does
@@ -271,14 +280,14 @@ This example will compute the
 inverse of $1+ep$:
 \begin{lstlisting}
 #include- series.h
-#call series(setExpansion,3)
+#call series(init(3))
 symbol ep;
 cfunction den;
 local [1] = den(1+ep);
-#call series(setExpansion,ep,3)
-#call series(expand,den)
+#call series(setExpansion(ep, 3))
+#call series(expand(den))
 ** alternative:
-** #call series(expand,den,ep,3)
+** #call series(expand(den, ep, 3))
 print [1];
 .end
 \end{lstlisting}
@@ -291,12 +300,12 @@ argument of {\tt expandPower} is the name of the function. This example
 will compute $(1+ep)^{1+ep}$:
 \begin{lstlisting}
 #include- series.h
-#call series(setExpansion,3)
+#call series(init(3))
 symbol ep;
 cfunction pow;
 local [1] = pow(1+ep,1+ep);
-#call series(setExpansion,ep,3)
-#call series(expandPower,pow)
+#call series(setExpansion(ep, 3))
+#call series(expandPower(pow))
 print [1];
 .end
 \end{lstlisting}
@@ -308,12 +317,12 @@ This procedure expands logarithms. The argument of {\tt expandLog} is the name o
 logarithm function. This example will compute $\log(1+ep)$:
 \begin{lstlisting}
 #include- series.h
-#call series(setExpansion,3)
+#call series(init(3))
 symbol ep;
 cfunction log;
 local [1] = log(1+ep);
-#call series(setExpansion,ep,3)
-#call series(expandLog,log)
+#call series(setExpansion(ep, 3))
+#call series(expandLog(log))
 print [1];
 .end
 \end{lstlisting}
@@ -326,12 +335,12 @@ expandExp} is the name of the exponential function. This example will
 compute $e^{1+ep}$:
 \begin{lstlisting}
 #include- series.h
-#call series(setExpansion,3)
+#call series(init(3))
 symbol ep;
 cfunction exp;
 local [1] = exp(1+ep);
-#call series(setExpansion,ep,3)
-#call series(expandExp,exp)
+#call series(setExpansion(ep, 3))
+#call series(expandExp(exp))
 print [1];
 .end
 \end{lstlisting}
@@ -344,12 +353,12 @@ expandDenominator} is the name of the function whose argument is to be
 inverted. This example will compute $1/(1+ep)$:
 \begin{lstlisting}
 #include- series.h
-#call series(setExpansion,3)
+#call series(init(3))
 symbol ep;
 cfunction den;
 local [1] = den(1+ep);
-#call series(setExpansion,ep,3)
-#call series(expandDenominator,den)
+#call series(setExpansion(ep, 3))
+#call series(expandDenominator(den))
 print [1];
 .end
 \end{lstlisting}
@@ -364,12 +373,12 @@ poles. It is left to the user to first extract singularities.
 This example will compute $\Gamma(1+ep)$:
 \begin{lstlisting}
 #include- series.h
-#call series(setExpansion,3)
+#call series(init(3))
 symbol ep;
 cfunction Gamma;
 local [1] = Gamma(1+ep);
-#call series(setExpansion,ep,3)
-#call series(expandGamma,Gamma)
+#call series(setExpansion(ep, 3))
+#call series(expandGamma(Gamma))
 print [1];
 .end
 \end{lstlisting}
@@ -384,12 +393,12 @@ function and its derivatives are regular.
 This example will expand $f(1+ep)$ in $ep$:
 \begin{lstlisting}
 #include- series.h
-#call series(setExpansion,3)
+#call series(init(3))
 symbol ep;
 cfunction den;
 local [1] = f(1+ep);
-#call series(setExpansion,ep,3)
-#call series(expandDenominator,den)
+#call series(setExpansion(ep, 3))
+#call series(expandFunction(den))
 print [1];
 .end
 \end{lstlisting}
@@ -416,11 +425,12 @@ treated as series. This FORM program will compute $(1+ep)^{1+ep}$ up to
 the power $ep^3$ and print the result:
 \begin{lstlisting}
 #include- series.h
+#call series(init(3))
 symbol ep;
 local [1]=1+ep;
 local [2]=[1];
-#call series(setExpansion,ep,3)
-#call series(power,[1],[2],[(1+ep)^(1+ep)])
+#call series(setExpansion(ep, 3))
+#call series(power([1], [2], [(1+ep)^(1+ep)]))
 print [(1+ep)^(1+ep)];
 .end
 \end{lstlisting}
@@ -434,10 +444,11 @@ expression) and stores it in an expression named like the second
 argument. This program will compute $\log (1+ep)$ up to power $ep^3$:
 \begin{lstlisting}
 #include- series.h
+#call series(init(3))
 symbol ep;
 local [1]=1+ep;
-#call series(setExpansion,ep,3)
-#call series(log,[1],[log(1+ep)])
+#call series(setExpansion(ep, 3))
+#call series(log([1], [log(1+ep)]))
 print [log(1+ep)];
 .end
 \end{lstlisting}
@@ -451,10 +462,11 @@ Like {\tt log} (section~\ref{sec:log}), but computes the
 exponential function. Compute $e^{ep}$ up to order $ep^3$:
 \begin{lstlisting}
 #include- series.h
+#call series(init(3))
 symbol ep;
 local [1]=ep;
-#call series(setExpansion,ep,3)
-#call series(exp,[1],[exp(ep)])
+#call series(setExpansion(ep, 3))
+#call series(exp([1], [exp(ep)]))
 print [exp(ep)];
 .end
 \end{lstlisting}
@@ -466,12 +478,12 @@ print [exp(ep)];
 This procedure inverts a series expression (first argument) and stores
 it in the expression given as the second argument. Thus
 \begin{lstlisting}
-#call series( invert,series,result)
+#call series(invert, series, result)
 \end{lstlisting}
 is equivalent to
 \begin{lstlisting}
 local [-1]=-1;
-#call series( power,series,[-1],result)
+#call series(power(series, [-1], result))
 drop [-1];
 \end{lstlisting}
 but more readable and faster.
@@ -485,10 +497,11 @@ Gamma function. The result can contain polygamma functions denoted as
 Compute $\Gamma(1+ep)$ up to order $ep^3$:
 \begin{lstlisting}
 #include- series.h
+#call series(init(3))
 symbol ep;
 local [1]=ep;
-#call series(setExpansion,ep,3)
-#call series(Gamma,[1],[Gamma(1+ep)])
+#call series(setExpansion(ep, 3))
+#call series(Gamma([1], [Gamma(1+ep)]))
 print [Gamma(1+ep)];
 .end
 \end{lstlisting}
@@ -503,11 +516,12 @@ and stores it in the expression given as the second argument.
 This expands $f(ep)$ up to order $ep^3$:
 \begin{lstlisting}
 #include- series.h
+#call series(init(3))
 symbol ep;
 cfunction f;
 local [1]=ep;
-#call series(setExpansion,ep,3)
-#call series(wrap,[1],f,[f(ep)])
+#call series(setExpansion(ep, 3))
+#call series(wrap([1], f, [f(ep)]))
 print [f(ep)];
 .end
 \end{lstlisting}
@@ -523,13 +537,13 @@ treated properly, i.e. where the series expansion is truncated too
 early. Here is one example:
 \begin{lstlisting}
 local foo = power(x-x^2, -1);
-#call series(expandPower,power, x, 5)
+#call series(expandPower(power, x, 5))
 ** bad: exp(-log(x)) * (1+x+...+x^5) misses x^5 term
 \end{lstlisting}
 Factoring out the pole explicitly fixes the problem:
 \begin{lstlisting}
 local foo = 1/x*power(1-x, -1);
-#call series(expandPower,power, x, 5)
+#call series(expandPower(power, x, 5))
 ** better: exp(-log(1)) * (1/x+1+x+...+x^5)
 \end{lstlisting}
 Alternatively, it is of course always possible to use the ``brute
@@ -541,7 +555,7 @@ expected:
 \begin{lstlisting}
 local foo = den(x-x^2);
 local bar = den(x)*den(1-x);
-#call series(expandDenominator,den, x, 5)
+#call series(expandDenominator(den, x, 5))
 ** good: (1/x+1+x+...+x^5)
 \end{lstlisting}
 
@@ -556,7 +570,7 @@ local foo =
 #include- large_expression
 ;
 **bad: this is slow
-#call series(expand,`F',ep,`CUT')
+#call series(expand(`F', ep, `CUT'))
 \end{lstlisting}
 Often, the function `F' will appear in many different terms with the
 same arguments so the same work will be done over and over again. It is
@@ -570,7 +584,7 @@ local foo =
 bracket `F',ep;
 .sort
 keep brackets;
-#call series(expand,`F',ep,`CUT')
+#call series(expand(`F', ep, `CUT'))
 \end{lstlisting}
 Sometimes it may be even faster to only isolate and expand `F'
 itself. In such cases, care should be taken that the expansion is
@@ -584,7 +598,7 @@ local foo =
 bracket `F';
 .sort
 keep brackets;
-#call series(expand,`F',ep,{`CUT'+`HighestPoleInCoefficient'})
+#call series(expand(`F', ep, {`CUT'+`HighestPoleInCoefficient'}))
 .sort
 if(count(ep,1) > `CUT') discard;
 \end{lstlisting}
@@ -599,7 +613,7 @@ repeat id den(x?)*den(y?) = den(x*y);
 bracket den,ep;
 .sort
 keep brackets;
-#call series(expand,den,ep,`CUT')
+#call series(expand(den, ep, `CUT'))
 \end{lstlisting}
 Finally, if TFORM is used, terms can be expanded in parallel:
 \begin{lstlisting}
@@ -610,7 +624,7 @@ local foo =
 bracket `F',ep;
 .sort
 keep brackets;
-#call series(expand,`F',ep,`CUT')
+#call series(expand(`F', ep, `CUT'))
 ** ...maybe more code here ...
 #call series(parallel)
 .sort
@@ -623,7 +637,7 @@ keep brackets;
 \label{sec:impl}
 
 This section covers implementation details. If you just want to use the
-package, you can savely stop reading here.
+package, you can safely stop reading here.
 
 \subsection{Generalities}
 \label{sec:impl_general}

@@ -1,8 +1,7 @@
 * main procedure
-* the first argument specifies the action (e.g. init or expand)
-* all remaining arguments are forwarded to that action
-#procedure @series(ACTION, ?ARGS)
+* the argument PROC(ARG) is the subprocedure PROC with its arguments ARG
+#procedure @series(?ARGS)
 
-   #call `ACTION'(`?ARGS')
+   #call `?ARGS'
 
 #endprocedure
